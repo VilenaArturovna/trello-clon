@@ -2,25 +2,27 @@ export type StateType = {
     columns: Array<ColumnType>
 }
 export type ColumnType = {
-    id: number
+    id: string
     title: string
     cards: Array<CardType>
 }
 export type CardType = {
-    id: number
+    id: string
     title: string
     author: string
     description: string
     comments: Array<CommentType>
-    commentsCount: number
 }
 export type CommentType = {
-    id: number
-    cardId: number
+    id: string
+    cardId: string
     text: string
     author: string
 }
 export type CardsStateType = {
-    [key: number]: Array<CardType> // объект может иметь свойства-ключи, которые строковые
-    // (а ключи вообще в объекте и не могут быть иными), а вот значения этих св-в - это массив объектов TaskType
+    [key: string]: Array<CardType>
+}
+export enum localStorageEnum {
+    userName = 'userName',
+    board = 'board'
 }

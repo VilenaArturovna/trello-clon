@@ -1,15 +1,22 @@
 import {CardsStateType} from "./state";
 
-const initialState: CardsStateType = {
-    [1]: [{id: 1, title: 'first', author: 'Alex', description: '', commentsCount: 0, comments: []}],
-    [2]: [{id: 1, title: 'second', author: 'Mark', description: '', commentsCount: 0, comments: []}],
-    [3]: [{id: 1, title: 'third', author: 'Nikita', description: '', commentsCount: 0, comments: []}],
-    [4]: [{id: 1, title: 'empty', author: 'Artem', description: '', commentsCount: 0, comments: []}],
+export const initialStateOfCards: CardsStateType = {
+    [1]: [{id: '1', title: 'first', author: 'Alex', description: '', comments: []}],
+    [2]: [{id: '1', title: 'second', author: 'Mark', description: '', comments: []}],
+    [3]: [{id: '1', title: 'third', author: 'Nikita', description: '', comments: []}],
+    [4]: [{id: '1', title: 'empty', author: 'Artem', description: '', comments: []}],
 }
 
-export const cardReducer = (state = initialState, action: ActionsType) => {
+/*
+export const cardReducer = (state = initialStateOfCards, action: ActionsType) => {
+    switch (action.type) {
+        case "FETCH-CARDS":
 
+        case "ADD-CARD":
+            return state
+    }
 }
+*/
 
 type ActionsType =
     ReturnType<typeof removeCard> |
@@ -20,7 +27,8 @@ type ActionsType =
     ReturnType<typeof removeDescription> |
     ReturnType<typeof addComment> |
     ReturnType<typeof changeComment> |
-    ReturnType<typeof removeComment>
+    ReturnType<typeof removeComment> |
+    ReturnType<typeof fetchCards>
 
 export const removeCard = (cardId: number, columnId: number) => ({
     type: 'REMOVE-CARD', cardId, columnId
@@ -49,3 +57,4 @@ export const changeComment = (commentId: number, cardId: number, columnId: numbe
 export const removeComment = (commentId: number, cardId: number, columnId: number) => ({
     type: 'REMOVE-COMMENT', commentId, cardId, columnId
 } as const)
+export const fetchCards = (columnId: number) => ({type: 'FETCH-CARDS', columnId} as const)

@@ -1,31 +1,63 @@
 import styled from "styled-components";
 import {Card} from "./Card";
-import {ChangeEvent, useReducer, useState} from "react";
-import {changeColumnTitle, columnReducer} from "../Reducers/column-reducer";
+import React, {ChangeEvent, useEffect, useReducer, useState} from "react";
+import {ActionsType, addCardAC, changeColumnTitle, initialState, mainReducer} from "../Reducers/main-reducer";
+import {localStorageEnum, StateType} from "../Reducers/state";
 
 type ColumnType = {
     title: string
-    id: number
+    id: string
 }
 
 const Section = styled.div`
   margin-left: 4px;
   margin-right: 4px;
   width: 272px;
-  height: 100%;
-  border: 1px solid #282c34;
-  border-radius: 10px;
+  background-color: #ebecf0;
+  border-radius: 3px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  position: relative;
+  white-space: normal;
 `
-const CardTitle = styled.h3`
+const ColumnTitle = styled.h3`
   text-align: start;
   padding-left: 10px;
 `
+const CardsList = styled.div`
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: 0 4px;
+  padding: 0 4px;
+  z-index: 1;
+  min-height: 0;
+`
+const AddingCardsContainer = styled.div`
+  border-radius: 3px;
+  color: #5e6c84;
+  display: block;
+  flex: 1 0 auto;
+  margin: 2px 0 8px 8px;
+  padding: 4px 8px;
+  position: relative;
+`
 
 export const Column = ({title, id}: ColumnType) => {
+
     const [columnTitle, setColumnTitle] = useState<string>(title)
-    const [columns, dispatch] = useReducer(columnReducer, [])
+    const [state, dispatch] = useReducer<React.Reducer<StateType, ActionsType>>(mainReducer, initialState)
+    const [cardTitle, setCardTitle] = useState<string>('')
+
     const [editMode, setEditMode] = useState<boolean>(false)
     const [addingMode, setAddingMode] = useState<boolean>(false)
+
+    useEffect(()=>{
+        debugger
+        localStorage.setItem(localStorageEnum.board, JSON.stringify(state))
+    }, [state])
 
     //Change title
 
@@ -35,7 +67,6 @@ export const Column = ({title, id}: ColumnType) => {
     const deactivateEditMode = (e: ChangeEvent<HTMLInputElement>) => {
         setEditMode(false)
         dispatch(changeColumnTitle(id, e.currentTarget.value))
-
     }
     const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setColumnTitle(e.currentTarget.value)
@@ -47,32 +78,33 @@ export const Column = ({title, id}: ColumnType) => {
         setAddingMode(true)
     }
     const addCard = () => {
-
+        dispatch(addCardAC(id, cardTitle))
         setAddingMode(false)
     }
 
     return (
         <Section>
             {!editMode
-                ? <CardTitle onClick={activateEditMode}>{columnTitle}</CardTitle>
+                ? <ColumnTitle onClick={activateEditMode}>{columnTitle}</ColumnTitle>
                 : <input onChange={onTitleChange} autoFocus={true} onBlur={deactivateEditMode}
                          onKeyDown={e => e.key === 'Enter' && deactivateEditMode}
                          value={columnTitle}/>
             }
+            <CardsList>
+                <Card title={'hello'}/>
+                <Card title={'world'}/>
+            </CardsList>
+            <AddingCardsContainer>
+                {
+                    !addingMode
+                        ? <span onClick={activateAddingMode}>Add one more card</span>
+                        : <div>
+                            <textarea placeholder={'Enter text'}></textarea>
+                            <button onClick={addCard}>Add card</button>
+                        </div>
 
-            <Card title={'hello'}/>
-
-            {
-                !addingMode
-                    ? <span onClick={activateAddingMode}>Добавить еще одну карточку</span>
-                    : <div>
-                        <textarea name="sssss"></textarea>
-                        <button onClick={addCard}>Add</button>
-                    </div>
-
-            }
-
-
+                }
+            </AddingCardsContainer>
         </Section>
     )
 }

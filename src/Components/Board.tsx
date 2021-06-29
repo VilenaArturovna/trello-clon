@@ -1,23 +1,34 @@
 import {Column} from "./Column";
 import styled from "styled-components";
-import {useEffect, useReducer} from "react";
-import {columnReducer, fetchColumns, initialStateOfColumn} from "../Reducers/column-reducer";
+import React, {useEffect, useReducer} from "react";
+import {mainReducer, fetchColumns, initialState, ActionsType} from "../Reducers/main-reducer";
+import {CardDetails} from "./CardDetails";
+import {localStorageEnum, StateType} from "../Reducers/state";
 
 const Section = styled.div`
-    display: flex;
+  display: flex;
+  margin: 20px;
 `
 
 export const Board = () => {
-    const [columns, dispatch] = useReducer(columnReducer, initialStateOfColumn)
+
+    const [state, dispatch] = useReducer<React.Reducer<StateType, ActionsType>>(mainReducer, initialState)
 
     useEffect(() => {
+        const data = localStorage.getItem(localStorageEnum.board)
+        if (data) {
+            const board: StateType = JSON.parse(data)
+            dispatch(fetchColumns(board.columns))
+        }
+    }, [])
 
-        dispatch(fetchColumns())
-    }, [columns])
 
     return (
-        <Section>
-            {columns.map(col => <Column title={col.title} id={col.id} key={col.id} />)}
-        </Section>
+        <div>
+            <Section>
+                {state.columns.map(col => <Column title={col.title} id={col.id} key={col.id}/>)}
+            </Section>
+            <CardDetails/>
+        </div>
     )
 }

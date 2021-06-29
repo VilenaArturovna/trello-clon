@@ -6,9 +6,26 @@ type CardType = {
 }
 
 const Item = styled.div`
-  text-align: start;
-  padding-left: 10px;
-
+  background-color: #fff;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgb(9 30 66 / 25%);
+  cursor: pointer;
+  display: block;
+  margin-bottom: 8px;
+  max-width: 300px;
+  min-height: 20px;
+  position: relative;
+  text-decoration: none;
+  z-index: 0;
+`
+const ItemDetails = styled.div`
+  overflow: hidden;
+  padding: 6px 8px 2px;
+  position: relative;
+  z-index: 10;
+`
+const InputCardTitle = styled.input`
+  width: 100%;
 `
 
 export const Card = ({title}: CardType) => {
@@ -31,9 +48,11 @@ export const Card = ({title}: CardType) => {
     return (
         <Item>
             {!editMode
-                ? <span onClick={activateEditMode}>{cardTitle}</span>
-                : <div><input onChange={onTitleChange} autoFocus={true} onBlur={deactivateEditMode}
-                              value={cardTitle}/></div>
+                ? <ItemDetails onClick={activateEditMode}>{cardTitle}</ItemDetails>
+                : <div>
+                    <InputCardTitle onChange={onTitleChange} autoFocus={true} onBlur={deactivateEditMode}
+                                    value={cardTitle}/>
+                </div>
             }
         </Item>
     )
