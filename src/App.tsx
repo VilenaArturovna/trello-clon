@@ -1,5 +1,4 @@
 import React, {useState} from 'react'
-import './App.css'
 import {Board} from "./Components/Board"
 import {PopUp} from "./Components/PopUp"
 import {localStorageEnum} from "./Reducers/state"

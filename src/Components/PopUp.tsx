@@ -1,10 +1,42 @@
-import styled from "styled-components";
-import {ChangeEvent, useState} from "react";
-import {localStorageEnum, StateType} from "../Reducers/state";
-import {useId} from "react-id-generator";
+import styled from "styled-components"
+import {ChangeEvent, useState} from "react"
+import {localStorageEnum, StateType} from "../Reducers/state"
+import {v1} from "uuid";
 
 type PropsType = {
     handleClose: () => void
+}
+
+export const PopUp = (props: PropsType) => {
+    const [userName, setUserName] = useState('')
+    const stateToLS: StateType = {
+        columns: [
+            {id: v1(), title: 'TODO', cards: []},
+            {id: v1(), title: 'Progress', cards: []},
+            {id: v1(), title: 'Testing', cards: []},
+            {id: v1(), title: 'Done', cards: []},
+        ]
+    }
+
+    const enterName = (e: ChangeEvent<HTMLInputElement>) => {
+        setUserName(e.currentTarget.value)
+    }
+    const setUserNameToLS = () => {
+        localStorage.setItem(localStorageEnum.userName, userName)
+        localStorage.setItem(localStorageEnum.board, JSON.stringify(stateToLS))
+        props.handleClose()
+    }
+
+    return (
+        <PopupBox>
+            <Box>
+                <form>
+                    <input onChange={enterName} type="text" placeholder={'Enter your name'}/>
+                    <button onClick={setUserNameToLS}>Send</button>
+                </form>
+            </Box>
+        </PopupBox>
+    )
 }
 
 const PopupBox = styled.div`
@@ -26,37 +58,3 @@ const Box = styled.div`
   padding: 20px;
   overflow: auto;
 `
-
-export const PopUp = (props: PropsType) => {
-    const [userName, setUserName] = useState('')
-    const idList = useId(4, 'column')
-    const stateToLS: StateType = {
-        columns: [
-            {id: idList[0], title: 'TODO', cards: []},
-            {id: idList[1], title: 'Progress', cards: []},
-            {id: idList[2], title: 'Testing', cards: []},
-            {id: idList[3], title: 'Done', cards: []},
-        ]
-    }
-
-    const enterName = (e: ChangeEvent<HTMLInputElement>) => {
-        setUserName(e.currentTarget.value)
-    }
-    const setUserNameToLS = () => {
-        localStorage.setItem(localStorageEnum.userName, userName)
-        props.handleClose()
-
-        localStorage.setItem(localStorageEnum.board, JSON.stringify(stateToLS))
-    }
-
-    return (
-        <PopupBox>
-            <Box>
-                <form>
-                    <input onChange={enterName} type="text" placeholder={'Enter your name'}/>
-                    <button onClick={setUserNameToLS}>Send</button>
-                </form>
-            </Box>
-        </PopupBox>
-    );
-};

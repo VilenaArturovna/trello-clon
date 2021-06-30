@@ -1,8 +1,36 @@
-import styled from "styled-components";
-import {ChangeEvent, useState} from "react";
+import styled from "styled-components"
+import React, {useState} from "react"
+import {CommentType} from "../Reducers/state"
+import {CardDetails} from "./CardDetails"
 
-type CardType = {
+export type CardPropsType = {
+    columnTitle: string
+    columnId: string
+    id: string
     title: string
+    description: string
+    comments: Array<CommentType>
+}
+
+export const Card = ({id, title, comments, description, columnTitle, columnId}: CardPropsType) => {
+
+    const [isOpen, setIsOpen] = useState(false)
+    const seeCardDetails = () => {
+        setIsOpen(true)
+    }
+
+    return (
+        <div onClick={seeCardDetails} onKeyDown={(e) => (e.key === 'Escape' && isOpen && setIsOpen(false))}>
+            <Item>
+
+                <ItemDetails>{title}</ItemDetails>
+                {comments.length > 0 && <Comments>comments: {comments.length}</Comments>}
+
+            </Item>
+            {isOpen && <CardDetails id={id} title={title} comments={comments} description={description} isOpen={isOpen}
+                                    setIsOpen={setIsOpen} columnTitle={columnTitle} columnId={columnId}/>}
+        </div>
+    )
 }
 
 const Item = styled.div`
@@ -16,44 +44,16 @@ const Item = styled.div`
   min-height: 20px;
   position: relative;
   text-decoration: none;
-  z-index: 0;
 `
 const ItemDetails = styled.div`
   overflow: hidden;
   padding: 6px 8px 2px;
   position: relative;
-  z-index: 10;
+  display: flex;
+  flex-direction: column;
 `
-const InputCardTitle = styled.input`
-  width: 100%;
+const Comments = styled.span`
+  font-size: 10px;
+  color: grey;
+  margin-left: 20px;
 `
-
-export const Card = ({title}: CardType) => {
-
-    const [cardTitle, setCardTitle] = useState<string>(title)
-    const [editMode, setEditMode] = useState<boolean>(false)
-
-    const activateEditMode = () => {
-        setEditMode(true)
-    }
-    const deactivateEditMode = (e: ChangeEvent<HTMLInputElement>) => {
-        setEditMode(false)
-        setCardTitle(e.currentTarget.value)
-
-    }
-    const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setCardTitle(e.currentTarget.value)
-    }
-
-    return (
-        <Item>
-            {!editMode
-                ? <ItemDetails onClick={activateEditMode}>{cardTitle}</ItemDetails>
-                : <div>
-                    <InputCardTitle onChange={onTitleChange} autoFocus={true} onBlur={deactivateEditMode}
-                                    value={cardTitle}/>
-                </div>
-            }
-        </Item>
-    )
-}
