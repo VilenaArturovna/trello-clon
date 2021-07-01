@@ -9,7 +9,7 @@ import {
     mainReducer
 } from "../Reducers/main-reducer"
 import {CardType, localStorageEnum, StateType} from "../Reducers/state"
-import {v1} from "uuid";
+import {v1} from "uuid"
 
 type ColumnPropsType = {
     title: string
@@ -17,7 +17,7 @@ type ColumnPropsType = {
     cards: Array<CardType>
 }
 
-export const Column = ({title, id, cards}: ColumnPropsType) => {
+export function Column({title, id, cards}: ColumnPropsType) {
     const [state, dispatch] = useReducer<React.Reducer<StateType, ActionsType>>(mainReducer, initialState)
 
     useEffect(() => {
@@ -33,7 +33,6 @@ export const Column = ({title, id, cards}: ColumnPropsType) => {
     const deactivateEditMode = (e: ChangeEvent<HTMLInputElement>) => {
         setEditMode(false)
         setColumnTitle(e.currentTarget.value)
-        debugger
         dispatch(changeColumnTitle(id, columnTitle))
     }
     const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -62,27 +61,50 @@ export const Column = ({title, id, cards}: ColumnPropsType) => {
 
     return (
         <Section>
-            {!editMode
-                ? <ColumnTitle onClick={activateEditMode}>{title}</ColumnTitle>
-                : <input onChange={onTitleChange} autoFocus={true} onBlur={deactivateEditMode}
-                         value={columnTitle}/>
-            }
+            {!editMode ? (
+                <ColumnTitle onClick={activateEditMode}>
+                    {title}
+                </ColumnTitle>
+            ) : (
+                <input
+                    onChange={onTitleChange}
+                    autoFocus
+                    onBlur={deactivateEditMode}
+                    value={columnTitle}
+                />
+            )}
             <CardsList>
-                {cards.map((card, index) => (
-                    <Card title={card.title} key={index} id={card.id} columnId={id} comments={card.comments}
-                          description={card.description} columnTitle={title}/>))}
+                {cards.map((card) => (
+                    <Card
+                        title={card.title}
+                        key={card.id}
+                        id={card.id}
+                        columnId={id}
+                        comments={card.comments}
+                        description={card.description}
+                        columnTitle={title}
+                    />
+                ))}
             </CardsList>
             <AddingCardsContainer>
-                {
-                    !addingMode
-                        ? <span onClick={activateAddingMode}>Add one more card</span>
-                        : <div>
-                            <textarea placeholder={'Enter text'} value={cardTitle} autoFocus
-                                      onChange={onNewCardAdding}
-                            />
-                            <button onClick={addCard}>Add card</button>
-                        </div>
-                }
+                {!addingMode ? (
+                    <span onClick={activateAddingMode}>
+                        Add one more card
+                    </span>
+                ) : (
+                    <div>
+                        <textarea
+                            placeholder="Enter text"
+                            value={cardTitle}
+                            autoFocus
+                            onChange={onNewCardAdding}
+
+                        />
+                        <button onClick={addCard}>
+                            Add card
+                        </button>
+                    </div>
+                )}
             </AddingCardsContainer>
         </Section>
     )

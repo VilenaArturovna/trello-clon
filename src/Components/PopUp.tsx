@@ -7,7 +7,7 @@ type PropsType = {
     handleClose: () => void
 }
 
-export const PopUp = (props: PropsType) => {
+export function PopUp(props: PropsType) {
     const [userName, setUserName] = useState('')
     const stateToLS: StateType = {
         columns: [
@@ -31,8 +31,10 @@ export const PopUp = (props: PropsType) => {
         <PopupBox>
             <Box>
                 <form>
-                    <input onChange={enterName} type="text" placeholder={'Enter your name'}/>
-                    <button onClick={setUserNameToLS}>Send</button>
+                    <input onChange={enterName} type="text" placeholder="Enter your name" />
+                    <button onClick={setUserNameToLS}>
+                        Send
+                    </button>
                 </form>
             </Box>
         </PopupBox>

@@ -4,7 +4,7 @@ import React, {useEffect, useReducer} from "react"
 import {mainReducer, fetchColumns, initialState, ActionsType} from "../Reducers/main-reducer"
 import {localStorageEnum, StateType} from "../Reducers/state"
 
-export const Board = () => {
+export function Board() {
     const [state, dispatch] = useReducer<React.Reducer<StateType, ActionsType>>(mainReducer, initialState)
 
     useEffect(() => {
@@ -18,7 +18,9 @@ export const Board = () => {
     return (
         <div>
             <Section>
-                {state.columns.map(col => <Column title={col.title} id={col.id} key={col.id} cards={col.cards}/>)}
+                {state.columns.map((col) => (
+                    <Column title={col.title} id={col.id} key={col.id} cards={col.cards} />
+                ))}
             </Section>
         </div>
     )

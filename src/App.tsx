@@ -1,7 +1,8 @@
-import React, {useState} from 'react'
+import React, {useReducer, useState} from 'react'
 import {Board} from "./Components/Board"
 import {PopUp} from "./Components/PopUp"
-import {localStorageEnum} from "./Reducers/state"
+import {ActionsType, Context, initialState, mainReducer} from './Reducers/main-reducer'
+import {localStorageEnum, StateType} from "./Reducers/state"
 
 function App() {
     const [isOpen, setIsOpen] = useState(true)
@@ -9,10 +10,17 @@ function App() {
     const togglePopup = () => {
         setIsOpen(!isOpen)
     }
+    const [state, dispatch] = useReducer<React.Reducer<StateType, ActionsType>>(mainReducer, initialState)
     return (
-        <div className="App">
-            {isOpen && !name ? <PopUp handleClose={togglePopup}/> : < Board/>}
-        </div>
+
+            <div>
+                {isOpen && !name ? (
+                    <PopUp handleClose={togglePopup}/>
+                ) : (
+                    <Context.Provider value={{dispatch, state}}><Board/></Context.Provider>
+                )}
+            </div>
+
     )
 }
 

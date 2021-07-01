@@ -1,7 +1,7 @@
 import styled from "styled-components"
-import React, {useState} from "react"
+import React, {useEffect, useRef, useState} from "react"
 import {CommentType} from "../Reducers/state"
-import {CardDetails} from "./CardDetails"
+import {CardDetails} from "./CardDetails/CardDetails"
 
 export type CardPropsType = {
     columnTitle: string
@@ -12,23 +12,51 @@ export type CardPropsType = {
     comments: Array<CommentType>
 }
 
-export const Card = ({id, title, comments, description, columnTitle, columnId}: CardPropsType) => {
-
+export function Card({id, title, comments, description, columnTitle, columnId}: CardPropsType) {
     const [isOpen, setIsOpen] = useState(false)
+    console.log("isOpen: " + isOpen)
     const seeCardDetails = () => {
         setIsOpen(true)
     }
+    const divRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        if(divRef && divRef.current) {
+            divRef.current.focus();
+        }
+    }, [isOpen === true])
 
+    const props = {id, title, comments, description, columnTitle, columnId}
     return (
-        <div onClick={seeCardDetails} onKeyDown={(e) => (e.key === 'Escape' && isOpen && setIsOpen(false))}>
+        <div
+            onClick={seeCardDetails}
+
+        >
             <Item>
-
-                <ItemDetails>{title}</ItemDetails>
-                {comments.length > 0 && <Comments>comments: {comments.length}</Comments>}
-
+                <ItemDetails>
+                    {title}
+                </ItemDetails>
+                {comments.length > 0 && (
+                    <Comments>
+                        comments: {comments.length}
+                    </Comments>
+                )}
             </Item>
-            {isOpen && <CardDetails id={id} title={title} comments={comments} description={description} isOpen={isOpen}
-                                    setIsOpen={setIsOpen} columnTitle={columnTitle} columnId={columnId}/>}
+            {isOpen && (
+                <div
+                    ref={divRef}
+                     onKeyDown={(e) => {
+                         if (e.code === "Escape" && isOpen) {
+                             console.log('esc')
+                             setIsOpen(false)
+                         }
+                     }}>
+                    <CardDetails
+                    {...props}
+                    isOpenModal={isOpen}
+                    closeModal={() => setIsOpen(false)}
+                />
+                </div>
+            )}
         </div>
     )
 }
