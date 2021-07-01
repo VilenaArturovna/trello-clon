@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useEffect, useReducer, useState} from "react";
-import {ActionsType, changeCardTitle, initialState, mainReducer, removeCard} from "../../Reducers/main-reducer";
-import {localStorageEnum, StateType} from "../../Reducers/state";
+import {ActionsType, changeCardTitle, initialState, mainReducer, removeCard} from "../../Redux/main-reducer";
+import {localStorageEnum, StateType} from "../../Redux/state";
 import {Button, Title} from "./CardDetails"
 import styled from "styled-components";
 

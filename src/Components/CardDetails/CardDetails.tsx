@@ -1,8 +1,8 @@
 import styled from "styled-components"
-import {localStorageEnum, StateType} from "../../Reducers/state"
+import {localStorageEnum, StateType} from "../../Redux/state"
 import React, {useEffect, useReducer} from "react"
 import {CardPropsType} from "../Card"
-import {ActionsType, initialState, mainReducer,} from "../../Reducers/main-reducer";
+import {ActionsType, initialState, mainReducer,} from "../../Redux/main-reducer";
 import {CardHeader} from "./CardHeader";
 import {CardDescription} from "./CardDescription";
 import {CardComments} from "./CardComments";

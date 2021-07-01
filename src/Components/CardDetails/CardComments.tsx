@@ -1,8 +1,8 @@
 import React, {ChangeEvent, useEffect, useReducer, useState} from "react";
 import {Button, TextField, Title} from "./CardDetails";
 import styled from "styled-components";
-import {CommentType, localStorageEnum, StateType} from "../../Reducers/state";
-import {ActionsType, addComment, changeComment, initialState, mainReducer} from "../../Reducers/main-reducer";
+import {CommentType, localStorageEnum, StateType} from "../../Redux/state";
+import {ActionsType, addComment, changeComment, initialState, mainReducer} from "../../Redux/main-reducer";
 import {CommentItem} from "./CommentItem";
 
 type PropsType = {
@@ -33,7 +33,7 @@ export function CardComments({userName, comments, id, columnId}: PropsType) {
             <Title>
                 Comments
             </Title>
-            <TextField placeholder="Enter your comment" value={newComment} onChange={onChangeHandler}/>
+            <TextField placeholder="Enter your comment" value={newComment} onChange={onChangeHandler} />
             <Button onClick={onAddComment}>Add comment</Button>
             {comments.map((com) => (
                 <CommentItem

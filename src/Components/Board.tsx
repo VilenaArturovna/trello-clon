@@ -1,24 +1,25 @@
 import {Column} from "./Column"
 import styled from "styled-components"
-import React, {useEffect, useReducer} from "react"
-import {mainReducer, fetchColumns, initialState, ActionsType} from "../Reducers/main-reducer"
-import {localStorageEnum, StateType} from "../Reducers/state"
+import React, {useEffect} from "react"
+import {fetchColumns} from "../Redux/main-reducer"
+import {ColumnType, localStorageEnum, StateType} from "../Redux/state"
+import {useDispatch, useSelector} from "react-redux";
 
 export function Board() {
-    const [state, dispatch] = useReducer<React.Reducer<StateType, ActionsType>>(mainReducer, initialState)
-
+    const dispatch = useDispatch()
+    const columns = useSelector<StateType, Array<ColumnType>>(state => state.columns)
     useEffect(() => {
         const data = localStorage.getItem(localStorageEnum.board)
         if (data) {
             const board: StateType = JSON.parse(data)
             dispatch(fetchColumns(board.columns))
         }
-    }, [])
+    }, [dispatch])
 
     return (
         <div>
             <Section>
-                {state.columns.map((col) => (
+                {columns.map((col) => (
                     <Column title={col.title} id={col.id} key={col.id} cards={col.cards} />
                 ))}
             </Section>

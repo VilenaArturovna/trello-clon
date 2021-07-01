@@ -1,15 +1,10 @@
 import styled from "styled-components"
 import {Card} from "./Card"
-import React, {ChangeEvent, useEffect, useReducer, useState} from "react"
-import {
-    ActionsType,
-    addCardAC,
-    changeColumnTitle,
-    initialState,
-    mainReducer
-} from "../Reducers/main-reducer"
-import {CardType, localStorageEnum, StateType} from "../Reducers/state"
+import React, {ChangeEvent, useEffect, useState} from "react"
+import {addCardAC, changeColumnTitle} from "../Redux/main-reducer"
+import {CardType, localStorageEnum, StateType} from "../Redux/state"
 import {v1} from "uuid"
+import {useDispatch, useSelector} from "react-redux";
 
 type ColumnPropsType = {
     title: string
@@ -18,7 +13,8 @@ type ColumnPropsType = {
 }
 
 export function Column({title, id, cards}: ColumnPropsType) {
-    const [state, dispatch] = useReducer<React.Reducer<StateType, ActionsType>>(mainReducer, initialState)
+    const dispatch = useDispatch()
+    const state = useSelector<StateType, StateType>(state => state)
 
     useEffect(() => {
         localStorage.setItem(localStorageEnum.board, JSON.stringify(state))

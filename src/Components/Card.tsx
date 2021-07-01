@@ -1,6 +1,6 @@
 import styled from "styled-components"
-import React, {useEffect, useRef, useState} from "react"
-import {CommentType} from "../Reducers/state"
+import React, {useState} from "react"
+import {CommentType} from "../Redux/state"
 import {CardDetails} from "./CardDetails/CardDetails"
 
 export type CardPropsType = {
@@ -17,20 +17,16 @@ export function Card({id, title, comments, description, columnTitle, columnId}: 
     console.log("isOpen: " + isOpen)
     const seeCardDetails = () => {
         setIsOpen(true)
-    }
-    const divRef = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        if(divRef && divRef.current) {
+        if (divRef && divRef.current) {
+            debugger
             divRef.current.focus();
         }
-    }, [isOpen === true])
+    }
+    const divRef = React.createRef<HTMLDivElement>();
 
     const props = {id, title, comments, description, columnTitle, columnId}
     return (
-        <div
-            onClick={seeCardDetails}
-
-        >
+        <div onClick={seeCardDetails}>
             <Item>
                 <ItemDetails>
                     {title}
@@ -44,17 +40,17 @@ export function Card({id, title, comments, description, columnTitle, columnId}: 
             {isOpen && (
                 <div
                     ref={divRef}
-                     onKeyDown={(e) => {
-                         if (e.code === "Escape" && isOpen) {
-                             console.log('esc')
-                             setIsOpen(false)
-                         }
-                     }}>
+                    onKeyDown={(e) => {
+                        if (e.code === "Escape" && isOpen) {
+                            console.log('esc')
+                            setIsOpen(false)
+                        }
+                    }}>
                     <CardDetails
-                    {...props}
-                    isOpenModal={isOpen}
-                    closeModal={() => setIsOpen(false)}
-                />
+                        {...props}
+                        isOpenModal={isOpen}
+                        closeModal={() => setIsOpen(false)}
+                    />
                 </div>
             )}
         </div>

@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import {ChangeEvent, useState} from "react"
-import {localStorageEnum, StateType} from "../Reducers/state"
+import {localStorageEnum, StateType} from "../Redux/state"
 import {v1} from "uuid";
 
 type PropsType = {

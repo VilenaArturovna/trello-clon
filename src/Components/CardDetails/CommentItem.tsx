@@ -1,7 +1,7 @@
 import {Button, ButtonGroup, TextField} from "./CardDetails";
 import React, {ChangeEvent, useEffect, useReducer, useState} from "react";
-import {ActionsType, changeComment, initialState, mainReducer, removeComment} from "../../Reducers/main-reducer";
-import {localStorageEnum, StateType} from "../../Reducers/state";
+import {ActionsType, changeComment, initialState, mainReducer, removeComment} from "../../Redux/main-reducer";
+import {localStorageEnum, StateType} from "../../Redux/state";
 import styled from "styled-components";
 
 type PropsType = {

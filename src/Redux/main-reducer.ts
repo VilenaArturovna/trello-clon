@@ -1,6 +1,5 @@
 import {ColumnType, localStorageEnum, StateType} from "./state"
 import {v1} from "uuid";
-import React, {Dispatch} from "react";
 
 const board = localStorage.getItem(localStorageEnum.board)
 
@@ -12,10 +11,6 @@ export const initialState: StateType = board ? JSON.parse(board) : {
         {id: v1(), title: 'Done', cards: []},
     ]
 }
-let dispatch: Dispatch<ActionsType>
-
-// @ts-ignore
-export const Context = React.createContext();
 
 export const mainReducer = (state = initialState, action: ActionsType) => {
     const copy = {...state}

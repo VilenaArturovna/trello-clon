@@ -1,8 +1,8 @@
 import React, {ChangeEvent, useEffect, useReducer, useState} from "react";
 import {Button, Title, TextField, ButtonGroup} from "./CardDetails";
 import styled from "styled-components";
-import {ActionsType, addDescription, initialState, mainReducer} from "../../Reducers/main-reducer";
-import {localStorageEnum, StateType} from "../../Reducers/state";
+import {ActionsType, addDescription, initialState, mainReducer} from "../../Redux/main-reducer";
+import {localStorageEnum, StateType} from "../../Redux/state";
 
 type PropsType = {
     description: string
