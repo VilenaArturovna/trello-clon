@@ -18,7 +18,6 @@ export function Card({id, title, comments, description, columnTitle, columnId}: 
     const seeCardDetails = () => {
         setIsOpen(true)
         if (divRef && divRef.current) {
-            debugger
             divRef.current.focus();
         }
     }

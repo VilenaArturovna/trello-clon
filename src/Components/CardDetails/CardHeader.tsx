@@ -1,8 +1,9 @@
-import React, {ChangeEvent, useEffect, useReducer, useState} from "react";
-import {ActionsType, changeCardTitle, initialState, mainReducer, removeCard} from "../../Redux/main-reducer";
-import {localStorageEnum, StateType} from "../../Redux/state";
+import React, {ChangeEvent, useState} from "react";
+import {changeCardTitle, removeCard} from "../../Redux/main-reducer";
 import {Button, Title} from "./CardDetails"
 import styled from "styled-components";
+import {useDispatch} from "react-redux";
+import {userName} from "../../api/api";
 
 type PropsType = {
     title: string
@@ -10,14 +11,10 @@ type PropsType = {
     columnId: string
     closeModal: () => void
     columnTitle: string
-    userName: string | null
 }
 
-export function CardHeader({title, columnTitle, columnId, id, closeModal, userName}: PropsType) {
-    const [state, dispatch] = useReducer<React.Reducer<StateType, ActionsType>>(mainReducer, initialState)
-    useEffect(() => {
-        localStorage.setItem(localStorageEnum.board, JSON.stringify(state))
-    }, [state])
+export function CardHeader({title, columnTitle, columnId, id, closeModal}: PropsType) {
+    const dispatch = useDispatch()
     const [cardTitle, setCardTitle] = useState<string>(title)
     const [editTitleMode, setEditTitleMode] = useState<boolean>(false)
     const activateEditTitleMode = () => {

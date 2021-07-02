@@ -1,5 +1,6 @@
 import {ColumnType, localStorageEnum, StateType} from "./state"
 import {v1} from "uuid";
+import {createSlice} from "@reduxjs/toolkit";
 
 const board = localStorage.getItem(localStorageEnum.board)
 
@@ -11,6 +12,7 @@ export const initialState: StateType = board ? JSON.parse(board) : {
         {id: v1(), title: 'Done', cards: []},
     ]
 }
+
 
 export const mainReducer = (state = initialState, action: ActionsType) => {
     const copy = {...state}

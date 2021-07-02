@@ -1,32 +1,28 @@
-import React, {ChangeEvent, useEffect, useReducer, useState} from "react";
+import React, {ChangeEvent, useState} from "react";
 import {Button, TextField, Title} from "./CardDetails";
 import styled from "styled-components";
-import {CommentType, localStorageEnum, StateType} from "../../Redux/state";
-import {ActionsType, addComment, changeComment, initialState, mainReducer} from "../../Redux/main-reducer";
+import {CommentType} from "../../Redux/state";
+import {addComment} from "../../Redux/main-reducer";
 import {CommentItem} from "./CommentItem";
+import {useDispatch} from "react-redux";
 
 type PropsType = {
-    userName: string | null
     comments: Array<CommentType>
     id: string
     columnId: string
 }
 
-export function CardComments({userName, comments, id, columnId}: PropsType) {
-    const [state, dispatch] = useReducer<React.Reducer<StateType, ActionsType>>(mainReducer, initialState)
-    useEffect(() => {
-        localStorage.setItem(localStorageEnum.board, JSON.stringify(state))
-    }, [state])
+export function CardComments({comments, id, columnId}: PropsType) {
+    const dispatch = useDispatch()
 
     const [newComment, setNewComment] = useState<string>('')
     const onChangeHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
         setNewComment(e.currentTarget.value)
     }
     const onAddComment = () => {
+        setNewComment('')
         dispatch(addComment(id, columnId, newComment))
     }
-
-
 
     return (
         <Comments>
@@ -40,10 +36,8 @@ export function CardComments({userName, comments, id, columnId}: PropsType) {
                     key={com.id}
                     columnId={columnId}
                     id={com.id}
-                    userName={userName}
                     cardId={id}
                     text={com.text}
-
                 />
             ))}
         </Comments>

@@ -1,8 +1,6 @@
 import styled from "styled-components"
-import {localStorageEnum, StateType} from "../../Redux/state"
-import React, {useEffect, useReducer} from "react"
+import React from "react"
 import {CardPropsType} from "../Card"
-import {ActionsType, initialState, mainReducer,} from "../../Redux/main-reducer";
 import {CardHeader} from "./CardHeader";
 import {CardDescription} from "./CardDescription";
 import {CardComments} from "./CardComments";
@@ -19,11 +17,6 @@ export function CardDetails({
                                 isOpenModal,
                                 closeModal
                             }: PropsType) {
-    const [state, dispatch] = useReducer<React.Reducer<StateType, ActionsType>>(mainReducer, initialState)
-    const userName = localStorage.getItem(localStorageEnum.userName)
-    useEffect(() => {
-        localStorage.setItem(localStorageEnum.board, JSON.stringify(state))
-    }, [state])
 
     return (
         <div>
@@ -40,11 +33,10 @@ export function CardDetails({
                                 columnId={columnId}
                                 columnTitle={columnTitle}
                                 closeModal={closeModal}
-                                userName={userName}
                             />
                             <Main>
                                 <CardDescription description={description} id={id} columnId={columnId} />
-                                <CardComments id={id} columnId={columnId} userName={userName} comments={comments}/>
+                                <CardComments id={id} columnId={columnId} comments={comments}/>
                             </Main>
                         </Wrapper>
                     </Window>

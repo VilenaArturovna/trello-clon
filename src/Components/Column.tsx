@@ -1,10 +1,10 @@
 import styled from "styled-components"
 import {Card} from "./Card"
-import React, {ChangeEvent, useEffect, useState} from "react"
+import React, {ChangeEvent, useState} from "react"
 import {addCardAC, changeColumnTitle} from "../Redux/main-reducer"
-import {CardType, localStorageEnum, StateType} from "../Redux/state"
+import {CardType} from "../Redux/state"
 import {v1} from "uuid"
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 
 type ColumnPropsType = {
     title: string
@@ -14,14 +14,9 @@ type ColumnPropsType = {
 
 export function Column({title, id, cards}: ColumnPropsType) {
     const dispatch = useDispatch()
-    const state = useSelector<StateType, StateType>(state => state)
-
-    useEffect(() => {
-        localStorage.setItem(localStorageEnum.board, JSON.stringify(state))
-    }, [state])
 
     //Change title of column
-    const [columnTitle, setColumnTitle] = useState<string>(title)
+    const [newTitle, setColumnTitle] = useState<string>(title)
     const [editMode, setEditMode] = useState<boolean>(false)
     const activateEditMode = () => {
         setEditMode(true)
@@ -29,7 +24,7 @@ export function Column({title, id, cards}: ColumnPropsType) {
     const deactivateEditMode = (e: ChangeEvent<HTMLInputElement>) => {
         setEditMode(false)
         setColumnTitle(e.currentTarget.value)
-        dispatch(changeColumnTitle(id, columnTitle))
+        dispatch(changeColumnTitle(id, newTitle))
     }
     const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setColumnTitle(e.currentTarget.value)
@@ -66,7 +61,7 @@ export function Column({title, id, cards}: ColumnPropsType) {
                     onChange={onTitleChange}
                     autoFocus
                     onBlur={deactivateEditMode}
-                    value={columnTitle}
+                    value={newTitle}
                 />
             )}
             <CardsList>

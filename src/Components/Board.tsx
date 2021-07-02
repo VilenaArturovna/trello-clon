@@ -12,6 +12,7 @@ export function Board() {
         const data = localStorage.getItem(localStorageEnum.board)
         if (data) {
             const board: StateType = JSON.parse(data)
+            const columns = board.columns
             dispatch(fetchColumns(board.columns))
         }
     }, [dispatch])
