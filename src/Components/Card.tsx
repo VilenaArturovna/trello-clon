@@ -47,7 +47,6 @@ export function Card({id, title, comments, description, columnTitle, columnId}: 
                     }}>
                     <CardDetails
                         {...props}
-                        isOpenModal={isOpen}
                         closeModal={() => setIsOpen(false)}
                     />
                 </div>

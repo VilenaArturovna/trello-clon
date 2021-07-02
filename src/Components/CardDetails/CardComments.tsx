@@ -8,11 +8,11 @@ import {useDispatch} from "react-redux";
 
 type PropsType = {
     comments: Array<CommentType>
-    id: string
+    cardId: string
     columnId: string
 }
 
-export function CardComments({comments, id, columnId}: PropsType) {
+export function CardComments({comments, cardId, columnId}: PropsType) {
     const dispatch = useDispatch()
 
     const [newComment, setNewComment] = useState<string>('')
@@ -21,7 +21,7 @@ export function CardComments({comments, id, columnId}: PropsType) {
     }
     const onAddComment = () => {
         setNewComment('')
-        dispatch(addComment(id, columnId, newComment))
+        dispatch(addComment({cardId: cardId, columnId, newComment}))
     }
 
     return (
@@ -29,14 +29,14 @@ export function CardComments({comments, id, columnId}: PropsType) {
             <Title>
                 Comments
             </Title>
-            <TextField placeholder="Enter your comment" value={newComment} onChange={onChangeHandler} />
+            <TextField placeholder="Enter your comment" value={newComment} onChange={onChangeHandler}/>
             <Button onClick={onAddComment}>Add comment</Button>
             {comments.map((com) => (
                 <CommentItem
                     key={com.id}
                     columnId={columnId}
-                    id={com.id}
-                    cardId={id}
+                    commentId={com.id}
+                    cardId={cardId}
                     text={com.text}
                 />
             ))}

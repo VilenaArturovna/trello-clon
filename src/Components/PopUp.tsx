@@ -31,7 +31,7 @@ export function PopUp(props: PropsType) {
         <PopupBox>
             <Box>
                 <form>
-                    <input onChange={enterName} type="text" placeholder="Enter your name" />
+                    <input onChange={enterName} type="text" placeholder="Enter your name"/>
                     <button onClick={setUserNameToLS}>
                         Send
                     </button>

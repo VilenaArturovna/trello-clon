@@ -5,7 +5,7 @@ import {CardHeader} from "./CardHeader";
 import {CardDescription} from "./CardDescription";
 import {CardComments} from "./CardComments";
 
-type PropsType = CardPropsType & { isOpenModal: boolean, closeModal: () => void }
+type PropsType = CardPropsType & { closeModal: () => void }
 
 export function CardDetails({
                                 id,
@@ -14,7 +14,6 @@ export function CardDetails({
                                 description,
                                 columnTitle,
                                 columnId,
-                                isOpenModal,
                                 closeModal
                             }: PropsType) {
 
@@ -28,15 +27,15 @@ export function CardDetails({
                                 X
                             </CloseIcon>
                             <CardHeader
-                                id={id}
+                                cardId={id}
                                 title={title}
                                 columnId={columnId}
                                 columnTitle={columnTitle}
                                 closeModal={closeModal}
                             />
                             <Main>
-                                <CardDescription description={description} id={id} columnId={columnId} />
-                                <CardComments id={id} columnId={columnId} comments={comments}/>
+                                <CardDescription desc={description} cardId={id} columnId={columnId}/>
+                                <CardComments cardId={id} columnId={columnId} comments={comments}/>
                             </Main>
                         </Wrapper>
                     </Window>
@@ -96,7 +95,7 @@ export const ButtonGroup = styled.div`
   display: flex;
 `
 export const Title = styled.div`
-  margin: 0px 0 10px;
+  margin: 0 0 10px;
   font-size: 24px;
 `
 export const TextField = styled.textarea`
@@ -111,5 +110,5 @@ const Main = styled.div`
   min-height: 24px;
   padding: 0 8px 8px 0;
   position: relative;
-  
+
 `

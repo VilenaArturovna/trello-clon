@@ -1,8 +1,8 @@
-import {ColumnType, localStorageEnum, StateType} from "./state"
+import {ColumnType, StateType} from "./state"
 import {v1} from "uuid";
-import {createSlice} from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {board} from "../api/api";
 
-const board = localStorage.getItem(localStorageEnum.board)
 
 export const initialState: StateType = board ? JSON.parse(board) : {
     columns: [
@@ -13,128 +13,100 @@ export const initialState: StateType = board ? JSON.parse(board) : {
     ]
 }
 
-
-export const mainReducer = (state = initialState, action: ActionsType) => {
-    const copy = {...state}
-    switch (action.type) {
-        case "CHANGE-COLUMN-TITLE":
-            const column = copy.columns.find((c) => (c.id === action.id))
-            if (column) {
-                column.title = action.newTitle
+const slice = createSlice({
+        name: 'main',
+        initialState,
+        reducers: {
+            changeColumnTitle(state, action: PayloadAction<{ id: string, newTitle: string }>) {
+                const index = state.columns.findIndex((column) => column.id === action.payload.id)
+                if (index > -1) state.columns[index].title = action.payload.newTitle
+            },
+            fetchColumns(state, action: PayloadAction<{ columns: Array<ColumnType> }>) {
+                state.columns = action.payload.columns.map((c) => ({...c, cards: c.cards.map(card => ({...card}))}))
+            },
+            addCardAC(state, action: PayloadAction<{ columnId: string, cardTitle: string, cardId: string }>) {
+                const index = state.columns.findIndex((column) => column.id === action.payload.columnId)
+                if (index > -1) state.columns[index].cards.push({
+                    id: action.payload.cardId,
+                    title: action.payload.cardTitle,
+                    comments: [],
+                    description: ''
+                })
+            },
+            removeCard(state, action: PayloadAction<{ cardId: string, columnId: string }>) {
+                const index = state.columns.findIndex((column) => column.id === action.payload.columnId)
+                if (index > -1) {
+                    state.columns[index].cards = state.columns[index].cards.filter((c) => (c.id !== action.payload.cardId))
+                }
+            },
+            changeCardTitle(state, action: PayloadAction<{ cardId: string, columnId: string, newTitle: string }>) {
+                const columnIndex = state.columns.findIndex((column) => column.id === action.payload.columnId)
+                if (columnIndex > -1) {
+                    const cardIndex = state.columns[columnIndex].cards.findIndex((card) => card.id = action.payload.cardId)
+                    if (cardIndex > -1) {
+                        state.columns[columnIndex].cards[cardIndex].title = action.payload.newTitle
+                    }
+                }
+            },
+            addDescription(state, action: PayloadAction<{ cardId: string, columnId: string, description: string }>) {
+                const columnIndex = state.columns.findIndex((column) => column.id === action.payload.columnId)
+                if (columnIndex > -1) {
+                    const cardIndex = state.columns[columnIndex].cards.findIndex((card) => card.id = action.payload.cardId)
+                    if (cardIndex > -1) {
+                        state.columns[columnIndex].cards[cardIndex].description = action.payload.description
+                    }
+                }
+            },
+            addComment(state, action: PayloadAction<{ cardId: string, columnId: string, newComment: string }>) {
+                const columnIndex = state.columns.findIndex((column) => column.id === action.payload.columnId)
+                if (columnIndex > -1) {
+                    const cardIndex = state.columns[columnIndex].cards.findIndex((card) => card.id = action.payload.cardId)
+                    if (cardIndex > -1) {
+                        state.columns[columnIndex].cards[cardIndex].comments.push({
+                            text: action.payload.newComment,
+                            id: v1()
+                        })
+                    }
+                }
+            },
+            changeComment(state, action: PayloadAction<{ commentId: string, cardId: string, columnId: string, comment: string }>) {
+                const columnIndex = state.columns.findIndex((column) => column.id === action.payload.columnId)
+                if (columnIndex > -1) {
+                    const cardIndex = state.columns[columnIndex].cards.findIndex((card) => card.id = action.payload.cardId)
+                    if (cardIndex > -1) {
+                        const commentIndex = state.columns[columnIndex].cards[cardIndex].comments.findIndex((comment) => comment.id = action.payload.commentId)
+                        if (commentIndex > -1) {
+                            state.columns[columnIndex].cards[cardIndex].comments[commentIndex].text = action.payload.comment
+                        }
+                    }
+                }
+            },
+            removeComment(state, action: PayloadAction<{ commentId: string, cardId: string, columnId: string }>) {
+                debugger
+                const columnIndex = state.columns.findIndex((column) => column.id === action.payload.columnId)
+                if (columnIndex > -1) {
+                    const cardIndex = state.columns[columnIndex].cards.findIndex((card) => card.id = action.payload.cardId)
+                    if (cardIndex > -1) {
+                        state.columns[columnIndex].cards[cardIndex].comments = state.columns[columnIndex].cards[cardIndex].comments.filter((comment) => (comment.id !== action.payload.commentId))
+                    }
+                }
             }
-            return copy
-        case "FETCH-COLUMNS": {
-            copy.columns = action.columns.map((c) => ({...c, cards: c.cards.map(card => ({...card}))}))
-            return copy
         }
-        case "ADD-CARD": {
-            copy.columns = state.columns.map((col) => ({...col}))
-            let column = copy.columns.find((c) => (c.id === action.columnId))
-            if (column) {
-                column.cards.push({id: action.cardId, title: action.cardTitle, comments: [], description: ''})
-            }
-            return copy
-        }
-        case "FETCH-CARDS": {
-            copy.columns = state.columns.map((col) => ({...col}))
-            let column = copy.columns.find((c) => (c.id === action.columnId))
-            if (column) {
-                column.cards = column.cards.map((card) => ({...card}))
-            }
-            return copy
-        }
-        case "CHANGE-CARD-TITLE": {
-            const column = copy.columns.find((c) => (c.id === action.columnId))
-            const card = column && column.cards.find((c) => (c.id === action.cardId))
-            if (card) {
-                card.title = action.newTitle
-            }
-            return copy
-        }
-        case "REMOVE-CARD": {
-            const column = copy.columns.find((c) => (c.id === action.columnId))
-            if (column) {
-                column.cards = column.cards.filter((c) => (c.id !== action.cardId))
-            }
-            return copy
-        }
-        case "ADD-DESCRIPTION": {
-            const column = copy.columns.find((c) => (c.id === action.columnId))
-            const card = column && column.cards.find((c) => (c.id === action.cardId))
-            if (card) {
-                card.description = action.description
-            }
-            return copy
-        }
-        case "ADD-COMMENT": {
-            const column = copy.columns.find((c) => (c.id === action.columnId))
-            const card = column && column.cards.find((c) => (c.id === action.cardId))
-            if (card) {
-                card.comments = [...card.comments, { text: action.comment, id: v1() }]
-            }
-            return copy
-        }
-        case "CHANGE-COMMENT": {
-            const column = copy.columns.find((c) => (c.id === action.columnId))
-            const card = column && column.cards.find((c) => (c.id === action.cardId))
-            const comment = card && card.comments.find((c) => (c.id === action.commentId))
-            if (comment) {
-                comment.text = action.newValue
-            }
-            return copy
-        }
-        case "REMOVE-COMMENT": {
-            const column = copy.columns.find((c) => (c.id === action.columnId))
-            const card = column && column.cards.find((c) => (c.id === action.cardId))
-            if (card) {
-                card.comments = card.comments.filter((c) => (c.id !== action.commentId))
-            }
-            return  copy
-        }
-        default:
-            return state
     }
-}
+)
 
-export type ActionsType =
-    ReturnType<typeof changeColumnTitle> |
-    ReturnType<typeof addCardAC> |
-    ReturnType<typeof fetchColumns> |
-    ReturnType<typeof removeCard> |
-    ReturnType<typeof changeCardTitle> |
-    ReturnType<typeof addDescription> |
-    ReturnType<typeof addComment> |
-    ReturnType<typeof changeComment> |
-    ReturnType<typeof removeComment> |
-    ReturnType<typeof fetchCards>
+export const {
+    changeColumnTitle,
+    fetchColumns,
+    addCardAC,
+    removeCard,
+    changeCardTitle,
+    addDescription,
+    addComment,
+    changeComment,
+    removeComment
+} = slice.actions
 
-export const changeColumnTitle = (id: string, newTitle: string) => ({
-    type: 'CHANGE-COLUMN-TITLE', id, newTitle
-} as const)
-export const addCardAC = (columnId: string, cardTitle: string, cardId: string) => ({
-    type: 'ADD-CARD', columnId, cardTitle, cardId
-} as const)
-export const fetchColumns = (columns: Array<ColumnType>) => ({
-    type: 'FETCH-COLUMNS', columns
-} as const)
-export const removeCard = (cardId: string, columnId: string) => ({
-    type: 'REMOVE-CARD', cardId, columnId
-} as const)
-export const changeCardTitle = (cardId: string, columnId: string, newTitle: string) => ({
-    type: 'CHANGE-CARD-TITLE', cardId, columnId, newTitle
-} as const)
-export const addDescription = (cardId: string, columnId: string, description: string) => ({
-    type: 'ADD-DESCRIPTION', cardId, columnId, description
-} as const)
-export const addComment = (cardId: string, columnId: string, comment: string) => ({
-    type: 'ADD-COMMENT', cardId, columnId, comment
-} as const)
-export const changeComment = (commentId: string, cardId: string, columnId: string, newValue: string) => ({
-    type: 'CHANGE-COMMENT', commentId, cardId, columnId, newValue
-} as const)
-export const removeComment = (commentId: string, cardId: string, columnId: string) => ({
-    type: 'REMOVE-COMMENT', commentId, cardId, columnId
-} as const)
-export const fetchCards = (columnId: string) => ({
-    type: 'FETCH-CARDS', columnId
-} as const)
+export const mainReducer = slice.reducer
+
+

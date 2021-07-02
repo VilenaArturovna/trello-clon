@@ -5,28 +5,28 @@ import styled from "styled-components";
 import {useDispatch} from "react-redux";
 import {userName} from "../../api/api";
 
-
 type PropsType = {
-    id: string
+    commentId: string
     cardId: string
     columnId: string
     text: string
 }
 
-export function CommentItem({id, columnId, cardId, text}: PropsType) {
+export function CommentItem({commentId, columnId, cardId, text}: PropsType) {
     const dispatch = useDispatch()
     const [comment, setComment] = useState<string>(text)
     const [editMode, setEditMode] = useState<boolean>(false)
 
     const onChangeComment = () => {
-        dispatch(changeComment(id, cardId, columnId, comment))
+        dispatch(changeComment({commentId, cardId, columnId, comment}))
         setEditMode(false)
     }
     const activateEditMode = () => {
         setEditMode(true)
     }
     const deleteComment = () => {
-        dispatch(removeComment(id, cardId, columnId))
+        debugger
+        dispatch(removeComment({commentId, cardId, columnId}))
     }
     const onChangeCommentHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
         setComment(e.currentTarget.value)

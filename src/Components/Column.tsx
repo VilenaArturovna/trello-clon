@@ -24,7 +24,7 @@ export function Column({title, id, cards}: ColumnPropsType) {
     const deactivateEditMode = (e: ChangeEvent<HTMLInputElement>) => {
         setEditMode(false)
         setColumnTitle(e.currentTarget.value)
-        dispatch(changeColumnTitle(id, newTitle))
+        dispatch(changeColumnTitle({id, newTitle}))
     }
     const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setColumnTitle(e.currentTarget.value)
@@ -45,7 +45,7 @@ export function Column({title, id, cards}: ColumnPropsType) {
         setCardTitle(e.currentTarget.value)
     }
     const addCard = () => {
-        dispatch(addCardAC(id, cardTitle, v1()))
+        dispatch(addCardAC({columnId: id, cardTitle, cardId: v1()}))
         setAddingMode(false)
         setCardTitle('')
     }

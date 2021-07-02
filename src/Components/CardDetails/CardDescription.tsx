@@ -1,24 +1,20 @@
-import React, {ChangeEvent, useEffect, useReducer, useState} from "react";
-import {Button, Title, TextField, ButtonGroup} from "./CardDetails";
+import React, {ChangeEvent, useState} from "react";
+import {Button, ButtonGroup, TextField, Title} from "./CardDetails";
 import styled from "styled-components";
-import {ActionsType, addDescription, initialState, mainReducer} from "../../Redux/main-reducer";
-import {localStorageEnum, StateType} from "../../Redux/state";
+import {addDescription} from "../../Redux/main-reducer";
+import {useDispatch} from "react-redux";
 
 type PropsType = {
-    description: string
-    id: string
+    desc: string
+    cardId: string
     columnId: string
 }
 
-export function CardDescription({description, id, columnId}: PropsType) {
-
-    const [state, dispatch] = useReducer<React.Reducer<StateType, ActionsType>>(mainReducer, initialState)
-    useEffect(() => {
-        localStorage.setItem(localStorageEnum.board, JSON.stringify(state))
-    }, [state])
+export function CardDescription({desc, cardId, columnId}: PropsType) {
+    const dispatch = useDispatch()
 
     const [editDescMode, setEditDescMode] = useState<boolean>(false)
-    const [desc, setDesc] = useState<string>(description)
+    const [description, setDesc] = useState<string>(desc)
     const onAddDescHandler = () => {
         setEditDescMode(true)
     }
@@ -26,7 +22,7 @@ export function CardDescription({description, id, columnId}: PropsType) {
         setDesc(e.currentTarget.value)
     }
     const onDescAdding = () => {
-        dispatch(addDescription(id, columnId, desc))
+        dispatch(addDescription({cardId: cardId, columnId, description}))
         setEditDescMode(false)
     }
     const onDescClear = () => {
@@ -61,7 +57,7 @@ export function CardDescription({description, id, columnId}: PropsType) {
                 <div>
                     <TextField
                         placeholder="Enter your description"
-                        value={desc}
+                        value={description}
                         onChange={onChangeDescHandler}
                     />
                     <ButtonGroup>

@@ -7,28 +7,28 @@ import {userName} from "../../api/api";
 
 type PropsType = {
     title: string
-    id: string
+    cardId: string
     columnId: string
     closeModal: () => void
     columnTitle: string
 }
 
-export function CardHeader({title, columnTitle, columnId, id, closeModal}: PropsType) {
+export function CardHeader({title, columnTitle, columnId, cardId, closeModal}: PropsType) {
     const dispatch = useDispatch()
-    const [cardTitle, setCardTitle] = useState<string>(title)
+    const [newTitle, setNewTitle] = useState<string>(title)
     const [editTitleMode, setEditTitleMode] = useState<boolean>(false)
     const activateEditTitleMode = () => {
         setEditTitleMode(true)
     }
-    const deactivateEditTitleMode = (e: ChangeEvent<HTMLInputElement>) => {
+    const deactivateEditTitleMode = () => {
         setEditTitleMode(false)
-        dispatch(changeCardTitle(id, columnId, cardTitle))
+        dispatch(changeCardTitle({cardId, columnId, newTitle}))
     }
     const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setCardTitle(e.currentTarget.value)
+        setNewTitle(e.currentTarget.value)
     }
     const deleteCard = () => {
-        dispatch(removeCard(id, columnId))
+        dispatch(removeCard({cardId: cardId, columnId}))
         closeModal()
     }
     return (
@@ -44,7 +44,7 @@ export function CardHeader({title, columnTitle, columnId, id, closeModal}: Props
                             onChange={onTitleChange}
                             autoFocus
                             onBlur={deactivateEditTitleMode}
-                            value={cardTitle}
+                            value={newTitle}
                         />
                     </div>
                 )}
