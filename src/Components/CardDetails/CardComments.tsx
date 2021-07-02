@@ -1,10 +1,12 @@
-import React, {ChangeEvent, useState} from "react";
-import {Button, TextField, Title} from "./CardDetails";
+import React from "react";
+import {ButtonGroup, TextField, Title} from "./CardDetails";
 import styled from "styled-components";
 import {CommentType} from "../../Redux/state";
 import {addComment} from "../../Redux/main-reducer";
 import {CommentItem} from "./CommentItem";
 import {useDispatch} from "react-redux";
+import {Field, Form} from "react-final-form";
+import {required} from "./CardHeader";
 
 type PropsType = {
     comments: Array<CommentType>
@@ -14,14 +16,8 @@ type PropsType = {
 
 export function CardComments({comments, cardId, columnId}: PropsType) {
     const dispatch = useDispatch()
-
-    const [newComment, setNewComment] = useState<string>('')
-    const onChangeHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        setNewComment(e.currentTarget.value)
-    }
-    const onAddComment = () => {
-        setNewComment('')
-        dispatch(addComment({cardId: cardId, columnId, newComment}))
+    const onAddComment = (values: {newComment: string}) => {
+        dispatch(addComment({cardId: cardId, columnId, newComment: values.newComment}))
     }
 
     return (
@@ -29,8 +25,28 @@ export function CardComments({comments, cardId, columnId}: PropsType) {
             <Title>
                 Comments
             </Title>
-            <TextField placeholder="Enter your comment" value={newComment} onChange={onChangeHandler}/>
-            <Button onClick={onAddComment}>Add comment</Button>
+            <Form
+                onSubmit={onAddComment}
+                render={({handleSubmit}) => (
+                    <form onSubmit={handleSubmit}>
+                        <div>
+                            <Field name="newComment" validate={required}>
+                                {({input, meta}) => (
+                                    <div>
+                                        <TextField {...input} type="text"/>
+                                        {meta.error && meta.touched && <span>{meta.error}</span>}
+                                    </div>
+                                )}
+                            </Field>
+                        </div>
+                        <ButtonGroup>
+                            <button type="submit">
+                                Add
+                            </button>
+                        </ButtonGroup>
+                    </form>
+                )}
+            />
             {comments.map((com) => (
                 <CommentItem
                     key={com.id}

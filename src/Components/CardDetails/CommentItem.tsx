@@ -1,9 +1,11 @@
 import {Button, ButtonGroup, TextField} from "./CardDetails";
-import React, {ChangeEvent, useState} from "react";
+import React, {useState} from "react";
 import {changeComment, removeComment} from "../../Redux/main-reducer";
 import styled from "styled-components";
 import {useDispatch} from "react-redux";
 import {userName} from "../../api/api";
+import {Field, Form} from "react-final-form";
+import {required} from "./CardHeader";
 
 type PropsType = {
     commentId: string
@@ -14,23 +16,19 @@ type PropsType = {
 
 export function CommentItem({commentId, columnId, cardId, text}: PropsType) {
     const dispatch = useDispatch()
-    const [comment, setComment] = useState<string>(text)
     const [editMode, setEditMode] = useState<boolean>(false)
 
-    const onChangeComment = () => {
-        dispatch(changeComment({commentId, cardId, columnId, comment}))
+    const onChangeComment = (values: { comment: string }) => {
+        dispatch(changeComment({commentId, cardId, columnId, comment: values.comment}))
         setEditMode(false)
     }
     const activateEditMode = () => {
         setEditMode(true)
     }
     const deleteComment = () => {
-        debugger
         dispatch(removeComment({commentId, cardId, columnId}))
     }
-    const onChangeCommentHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        setComment(e.currentTarget.value)
-    }
+
     return (
         <Comment>
             {!editMode ? (
@@ -52,10 +50,32 @@ export function CommentItem({commentId, columnId, cardId, text}: PropsType) {
                 </>
             ) : (
                 <>
-                    <TextField value={comment} onChange={onChangeCommentHandler}/>
-                    <Button onClick={onChangeComment}>
-                        Save
-                    </Button>
+                    <Form
+                        onSubmit={onChangeComment}
+                        initialValues={{comment: text}}
+                        render={({handleSubmit}) => (
+                            <form onSubmit={handleSubmit}>
+                                <div>
+                                    <Field name="comment" validate={required}>
+                                        {({input, meta}) => (
+                                            <div>
+                                                <TextField {...input} type="text"/>
+                                                {meta.error && meta.touched && <span>{meta.error}</span>}
+                                            </div>
+                                        )}
+                                    </Field>
+                                </div>
+                                <ButtonGroup>
+                                    <button type="submit">
+                                        Save
+                                    </button>
+                                    <button onClick={() => setEditMode(false)}>
+                                        Cancel
+                                    </button>
+                                </ButtonGroup>
+                            </form>
+                        )}
+                    />
                 </>
             )}
         </Comment>

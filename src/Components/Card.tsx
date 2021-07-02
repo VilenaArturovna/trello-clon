@@ -27,21 +27,14 @@ export function Card({id, title, comments, description, columnTitle, columnId}: 
     return (
         <div onClick={seeCardDetails}>
             <Item>
-                <ItemDetails>
-                    {title}
-                </ItemDetails>
-                {comments.length > 0 && (
-                    <Comments>
-                        comments: {comments.length}
-                    </Comments>
-                )}
+                <ItemDetails>{title}</ItemDetails>
+                {(comments.length > 0) && <Comments>comments: {comments.length}</Comments>}
             </Item>
             {isOpen && (
                 <div
                     ref={divRef}
                     onKeyDown={(e) => {
                         if (e.code === "Escape" && isOpen) {
-                            console.log('esc')
                             setIsOpen(false)
                         }
                     }}>

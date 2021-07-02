@@ -1,10 +1,13 @@
 import styled from "styled-components"
 import {Card} from "./Card"
-import React, {ChangeEvent, useState} from "react"
+import React, {useState} from "react"
 import {addCardAC, changeColumnTitle} from "../Redux/main-reducer"
 import {CardType} from "../Redux/state"
 import {v1} from "uuid"
 import {useDispatch} from "react-redux";
+import {Field, Form} from "react-final-form";
+import {ButtonGroup} from "./CardDetails/CardDetails";
+import {required} from "./CardDetails/CardHeader";
 
 type ColumnPropsType = {
     title: string
@@ -16,38 +19,23 @@ export function Column({title, id, cards}: ColumnPropsType) {
     const dispatch = useDispatch()
 
     //Change title of column
-    const [newTitle, setColumnTitle] = useState<string>(title)
     const [editMode, setEditMode] = useState<boolean>(false)
     const activateEditMode = () => {
         setEditMode(true)
     }
-    const deactivateEditMode = (e: ChangeEvent<HTMLInputElement>) => {
+    const onChangeTitle = (values: { newTitle: string }) => {
+        dispatch(changeColumnTitle({id, newTitle: values.newTitle}))
         setEditMode(false)
-        setColumnTitle(e.currentTarget.value)
-        dispatch(changeColumnTitle({id, newTitle}))
-    }
-    const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setColumnTitle(e.currentTarget.value)
     }
 
     //Add card
-    const [cardTitle, setCardTitle] = useState<string>('')
     const [addingMode, setAddingMode] = useState<boolean>(false)
     const activateAddingMode = () => {
         setAddingMode(true)
     }
-    /*
-        const deactivateAddingMode = () => {
-            setAddingMode(false)
-        }
-    */
-    const onNewCardAdding = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        setCardTitle(e.currentTarget.value)
-    }
-    const addCard = () => {
-        dispatch(addCardAC({columnId: id, cardTitle, cardId: v1()}))
+    const addCard = (values: { cardTitle: string }) => {
+        dispatch(addCardAC({columnId: id, cardTitle: values.cardTitle, cardId: v1()}))
         setAddingMode(false)
-        setCardTitle('')
     }
 
     return (
@@ -57,11 +45,32 @@ export function Column({title, id, cards}: ColumnPropsType) {
                     {title}
                 </ColumnTitle>
             ) : (
-                <input
-                    onChange={onTitleChange}
-                    autoFocus
-                    onBlur={deactivateEditMode}
-                    value={newTitle}
+                <Form
+                    onSubmit={onChangeTitle}
+                    initialValues={{newTitle: title}}
+                    render={({handleSubmit}) => (
+                        <form onSubmit={handleSubmit}>
+                            <div>
+                                <Field name="newTitle" validate={required}>
+                                    {({input, meta}) => (
+                                        <div>
+                                            <input {...input} type="text" placeholder="newTitle"/>
+                                            {meta.error && meta.touched && <span>{meta.error}</span>}
+                                        </div>
+                                    )}
+                                </Field>
+
+                            </div>
+                            <ButtonGroup>
+                                <button type="submit">
+                                    Save
+                                </button>
+                                <button onClick={() => setEditMode(false)}>
+                                    Cancel
+                                </button>
+                            </ButtonGroup>
+                        </form>
+                    )}
                 />
             )}
             <CardsList>
@@ -83,18 +92,31 @@ export function Column({title, id, cards}: ColumnPropsType) {
                         Add one more card
                     </span>
                 ) : (
-                    <div>
-                        <textarea
-                            placeholder="Enter text"
-                            value={cardTitle}
-                            autoFocus
-                            onChange={onNewCardAdding}
-
-                        />
-                        <button onClick={addCard}>
-                            Add card
-                        </button>
-                    </div>
+                    <Form
+                        onSubmit={addCard}
+                        render={({handleSubmit}) => (
+                            <form onSubmit={handleSubmit}>
+                                <div>
+                                    <Field name="cardTitle" validate={required}>
+                                        {({input, meta}) => (
+                                            <div>
+                                                <Input {...input} type="text" placeholder="Enter text"/>
+                                                {(meta.error && meta.touched) && <div>{meta.error}</div>}
+                                            </div>
+                                        )}
+                                    </Field>
+                                </div>
+                                <ButtonGroup>
+                                    <button type="submit">
+                                        Add card
+                                    </button>
+                                    <button onClick={() => setAddingMode(false)}>
+                                        Cancel
+                                    </button>
+                                </ButtonGroup>
+                            </form>
+                        )}
+                    />
                 )}
             </AddingCardsContainer>
         </Section>
@@ -135,4 +157,7 @@ const AddingCardsContainer = styled.div`
   margin: 2px 0 8px 8px;
   padding: 4px 8px;
   position: relative;
+`
+const Input = styled.input`
+  height: 30px;
 `

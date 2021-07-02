@@ -3,17 +3,17 @@ import {Board} from "./Components/Board"
 import {PopUp} from "./Components/PopUp"
 import {localStorageEnum, StateType} from "./Redux/state"
 import {useSelector} from "react-redux";
+import {userName} from "./api/api";
 
 function App() {
     const [isOpen, setIsOpen] = useState(true)
-    const userName = localStorage.getItem(localStorageEnum.userName)
     const togglePopup = () => {
         setIsOpen(!isOpen)
     }
     const state = useSelector<StateType, StateType>(state => state)
 
     useEffect(() => {
-        localStorage.setItem(localStorageEnum.board, JSON.stringify(state))
+            localStorage.setItem(localStorageEnum.board, JSON.stringify(state))
     }, [state])
     return (
         <div>

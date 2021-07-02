@@ -1,9 +1,10 @@
-import React, {ChangeEvent, useState} from "react";
+import React, {useState} from "react";
 import {changeCardTitle, removeCard} from "../../Redux/main-reducer";
-import {Button, Title} from "./CardDetails"
+import {Button, ButtonGroup, Title} from "./CardDetails"
 import styled from "styled-components";
 import {useDispatch} from "react-redux";
 import {userName} from "../../api/api";
+import {Field, Form} from "react-final-form";
 
 type PropsType = {
     title: string
@@ -12,25 +13,24 @@ type PropsType = {
     closeModal: () => void
     columnTitle: string
 }
+export const required = (value: any) => (value ? undefined : 'Required')
 
 export function CardHeader({title, columnTitle, columnId, cardId, closeModal}: PropsType) {
     const dispatch = useDispatch()
-    const [newTitle, setNewTitle] = useState<string>(title)
     const [editTitleMode, setEditTitleMode] = useState<boolean>(false)
     const activateEditTitleMode = () => {
         setEditTitleMode(true)
     }
-    const deactivateEditTitleMode = () => {
+    const onChangeTitle = (values: { newTitle: string }) => {
         setEditTitleMode(false)
-        dispatch(changeCardTitle({cardId, columnId, newTitle}))
-    }
-    const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setNewTitle(e.currentTarget.value)
+        dispatch(changeCardTitle({cardId, columnId, newTitle: values.newTitle}))
     }
     const deleteCard = () => {
         dispatch(removeCard({cardId: cardId, columnId}))
         closeModal()
     }
+
+
     return (
         <Header>
             <div>
@@ -40,26 +40,42 @@ export function CardHeader({title, columnTitle, columnId, cardId, closeModal}: P
                     </Title>
                 ) : (
                     <div>
-                        <InputCardTitle
-                            onChange={onTitleChange}
-                            autoFocus
-                            onBlur={deactivateEditTitleMode}
-                            value={newTitle}
+                        <Form
+                            onSubmit={onChangeTitle}
+                            initialValues={{newTitle: title}}
+                            render={({handleSubmit}) => (
+                                <form onSubmit={handleSubmit}>
+                                    <div>
+                                        <Field name="newTitle" validate={required}>
+                                            {({input, meta}) => (
+                                                <div>
+                                                    <InputCardTitle {...input} type="text" placeholder="newTitle"/>
+                                                    {meta.error && meta.touched && <span>{meta.error}</span>}
+                                                </div>
+                                            )}
+                                        </Field>
+
+                                    </div>
+                                    <ButtonGroup>
+                                        <button type="submit">
+                                            Save
+                                        </button>
+                                        <button onClick={() => setEditTitleMode(false)}>
+                                            Cancel
+                                        </button>
+                                    </ButtonGroup>
+                                </form>
+                            )}
                         />
                     </div>
                 )}
-                <HeaderInlineContent>
-                    column: {columnTitle}
-                </HeaderInlineContent>
-                <HeaderInlineContent>
-                    author: {userName}
-                </HeaderInlineContent>
+                <HeaderInlineContent>column: {columnTitle}</HeaderInlineContent>
+                <HeaderInlineContent>author: {userName}</HeaderInlineContent>
             </div>
             <Button onClick={deleteCard}>
                 Remove card
             </Button>
         </Header>
-
     )
 }
 

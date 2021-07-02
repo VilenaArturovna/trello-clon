@@ -16,14 +16,13 @@ export function CardDetails({
                                 columnId,
                                 closeModal
                             }: PropsType) {
-
     return (
         <div>
             <PopupBox>
                 <Container>
                     <Window>
                         <Wrapper>
-                            <CloseIcon onClick={() => closeModal()}>
+                            <CloseIcon onClick={closeModal}>
                                 X
                             </CloseIcon>
                             <CardHeader
@@ -98,7 +97,7 @@ export const Title = styled.div`
   margin: 0 0 10px;
   font-size: 24px;
 `
-export const TextField = styled.textarea`
+export const TextField = styled.input`
   width: 550px;
   height: 45px;
   padding-bottom: 10px;

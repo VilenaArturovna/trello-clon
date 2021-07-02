@@ -1,8 +1,9 @@
-import React, {ChangeEvent, useState} from "react";
+import React, {useState} from "react";
 import {Button, ButtonGroup, TextField, Title} from "./CardDetails";
 import styled from "styled-components";
 import {addDescription} from "../../Redux/main-reducer";
 import {useDispatch} from "react-redux";
+import {Field, Form} from "react-final-form";
 
 type PropsType = {
     desc: string
@@ -14,19 +15,17 @@ export function CardDescription({desc, cardId, columnId}: PropsType) {
     const dispatch = useDispatch()
 
     const [editDescMode, setEditDescMode] = useState<boolean>(false)
-    const [description, setDesc] = useState<string>(desc)
     const onAddDescHandler = () => {
         setEditDescMode(true)
     }
-    const onChangeDescHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        setDesc(e.currentTarget.value)
-    }
-    const onDescAdding = () => {
-        dispatch(addDescription({cardId: cardId, columnId, description}))
+
+    const onDescAdding = (values: { description: string }) => {
+        dispatch(addDescription({cardId, columnId, description: values.description}))
         setEditDescMode(false)
     }
     const onDescClear = () => {
-        setDesc('')
+        dispatch(addDescription({cardId, columnId, description: ''}))
+        setEditDescMode(true)
     }
 
     return (
@@ -34,7 +33,7 @@ export function CardDescription({desc, cardId, columnId}: PropsType) {
             <Title>
                 Description
             </Title>
-            {!description && !editDescMode ? (
+            {!desc && !editDescMode ? (
                 <Button onClick={onAddDescHandler}>
                     Add description
                 </Button>
@@ -43,7 +42,7 @@ export function CardDescription({desc, cardId, columnId}: PropsType) {
                     {!editDescMode && (
                         <>
                             <DescriptionText onClick={onAddDescHandler}>
-                                {description}
+                                {desc}
                             </DescriptionText>
                             <Button onClick={onAddDescHandler}>
                                 Change
@@ -55,19 +54,32 @@ export function CardDescription({desc, cardId, columnId}: PropsType) {
             {editDescMode
             && (
                 <div>
-                    <TextField
-                        placeholder="Enter your description"
-                        value={description}
-                        onChange={onChangeDescHandler}
+                    <Form
+                        onSubmit={onDescAdding}
+                        initialValues={{description: desc}}
+                        render={({handleSubmit}) => (
+                            <form onSubmit={handleSubmit}>
+                                <div>
+                                    <Field name="description">
+                                        {({input, meta}) => (
+                                            <div>
+                                                <TextField {...input} type="text" placeholder="add description"/>
+                                                {meta.error && meta.touched && <span>{meta.error}</span>}
+                                            </div>
+                                        )}
+                                    </Field>
+                                </div>
+                                <ButtonGroup>
+                                    <button type="submit">
+                                        Save
+                                    </button>
+                                    <button onClick={onDescClear}>
+                                        Delete
+                                    </button>
+                                </ButtonGroup>
+                            </form>
+                        )}
                     />
-                    <ButtonGroup>
-                        <Button onClick={onDescAdding}>
-                            Save
-                        </Button>
-                        <Button onClick={onDescClear}>
-                            Clear
-                        </Button>
-                    </ButtonGroup>
                 </div>
             )}
         </Description>

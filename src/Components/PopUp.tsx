@@ -1,41 +1,41 @@
 import styled from "styled-components"
-import {ChangeEvent, useState} from "react"
-import {localStorageEnum, StateType} from "../Redux/state"
-import {v1} from "uuid";
+import {localStorageEnum} from "../Redux/state"
+import {Field, Form} from 'react-final-form'
 
 type PropsType = {
     handleClose: () => void
 }
 
 export function PopUp(props: PropsType) {
-    const [userName, setUserName] = useState('')
-    const stateToLS: StateType = {
-        columns: [
-            {id: v1(), title: 'TODO', cards: []},
-            {id: v1(), title: 'Progress', cards: []},
-            {id: v1(), title: 'Testing', cards: []},
-            {id: v1(), title: 'Done', cards: []},
-        ]
-    }
-
-    const enterName = (e: ChangeEvent<HTMLInputElement>) => {
-        setUserName(e.currentTarget.value)
-    }
-    const setUserNameToLS = () => {
-        localStorage.setItem(localStorageEnum.userName, userName)
-        localStorage.setItem(localStorageEnum.board, JSON.stringify(stateToLS))
+    const setUserNameToLS = (values: { userName: string }) => {
+        localStorage.setItem(localStorageEnum.userName, values.userName)
         props.handleClose()
     }
 
     return (
         <PopupBox>
             <Box>
-                <form>
-                    <input onChange={enterName} type="text" placeholder="Enter your name"/>
-                    <button onClick={setUserNameToLS}>
-                        Send
-                    </button>
-                </form>
+                <Form
+                    onSubmit={setUserNameToLS}
+                    render={({handleSubmit, submitting, pristine}) => (
+                        <form onSubmit={handleSubmit}>
+                            <div>
+                                <Label>Name</Label>
+                                <Field
+                                    name="userName"
+                                    component="input"
+                                    type="text"
+                                    placeholder="Enter Your Name"
+                                />
+                            </div>
+                            <SubmitButton>
+                                <button type="submit" disabled={submitting || pristine}>
+                                    Submit
+                                </button>
+                            </SubmitButton>
+                        </form>
+                    )}
+                />
             </Box>
         </PopupBox>
     )
@@ -59,4 +59,11 @@ const Box = styled.div`
   border-radius: 10px;
   padding: 20px;
   overflow: auto;
+`
+const Label = styled.label`
+  display: block;
+  margin-bottom: 7px;
+`
+export const SubmitButton = styled.div`
+  margin-top: 7px;
 `

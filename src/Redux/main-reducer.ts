@@ -3,7 +3,6 @@ import {v1} from "uuid";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {board} from "../api/api";
 
-
 export const initialState: StateType = board ? JSON.parse(board) : {
     columns: [
         {id: v1(), title: 'TODO', cards: []},
@@ -82,7 +81,6 @@ const slice = createSlice({
                 }
             },
             removeComment(state, action: PayloadAction<{ commentId: string, cardId: string, columnId: string }>) {
-                debugger
                 const columnIndex = state.columns.findIndex((column) => column.id === action.payload.columnId)
                 if (columnIndex > -1) {
                     const cardIndex = state.columns[columnIndex].cards.findIndex((card) => card.id = action.payload.cardId)
