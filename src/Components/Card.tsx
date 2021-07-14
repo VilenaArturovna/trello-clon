@@ -17,11 +17,7 @@ export function Card({id, title, comments, description, columnTitle, columnId}: 
     console.log("isOpen: " + isOpen)
     const seeCardDetails = () => {
         setIsOpen(true)
-        if (divRef && divRef.current) {
-            divRef.current.focus();
-        }
     }
-    const divRef = React.createRef<HTMLDivElement>();
 
     const props = {id, title, comments, description, columnTitle, columnId}
     return (
@@ -32,15 +28,11 @@ export function Card({id, title, comments, description, columnTitle, columnId}: 
             </Item>
             {isOpen && (
                 <div
-                    ref={divRef}
-                    onKeyDown={(e) => {
-                        if (e.code === "Escape" && isOpen) {
-                            setIsOpen(false)
-                        }
-                    }}>
+                    >
                     <CardDetails
                         {...props}
                         closeModal={() => setIsOpen(false)}
+                        isOpen={isOpen}
                     />
                 </div>
             )}

@@ -33,7 +33,7 @@ export function CardComments({comments, cardId, columnId}: PropsType) {
                             <Field name="newComment" validate={required}>
                                 {({input, meta}) => (
                                     <div>
-                                        <TextField {...input} type="text"/>
+                                        <TextField {...input} type="text" autoFocus/>
                                         {meta.error && meta.touched && <span>{meta.error}</span>}
                                     </div>
                                 )}
