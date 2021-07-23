@@ -1,108 +1,114 @@
-import {ColumnType, StateType} from "./state"
+import {StateType} from "./state"
 import {v1} from "uuid";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {board} from "../api/api";
 
-export const initialState: StateType = board ? JSON.parse(board) : {
+export const initialState: StateType = {
     columns: [
         {id: v1(), title: 'TODO', cards: []},
         {id: v1(), title: 'Progress', cards: []},
         {id: v1(), title: 'Testing', cards: []},
         {id: v1(), title: 'Done', cards: []},
-    ]
+    ],
+    userName: ''
 }
 
 const slice = createSlice({
-        name: 'main',
-        initialState,
-        reducers: {
-            changeColumnTitle(state, action: PayloadAction<{ id: string, newTitle: string }>) {
-                const index = state.columns.findIndex((column) => column.id === action.payload.id)
-                if (index > -1) state.columns[index].title = action.payload.newTitle
-            },
-            fetchColumns(state, action: PayloadAction<{ columns: Array<ColumnType> }>) {
-                state.columns = action.payload.columns.map((c) => ({...c, cards: c.cards.map(card => ({...card}))}))
-            },
-            addCardAC(state, action: PayloadAction<{ columnId: string, cardTitle: string, cardId: string }>) {
-                const index = state.columns.findIndex((column) => column.id === action.payload.columnId)
-                if (index > -1) state.columns[index].cards.push({
-                    id: action.payload.cardId,
-                    title: action.payload.cardTitle,
-                    comments: [],
-                    description: ''
-                })
-            },
-            removeCard(state, action: PayloadAction<{ cardId: string, columnId: string }>) {
-                const index = state.columns.findIndex((column) => column.id === action.payload.columnId)
-                if (index > -1) {
-                    state.columns[index].cards = state.columns[index].cards.filter((c) => (c.id !== action.payload.cardId))
+    name: 'main',
+    initialState,
+    reducers: {
+        changeColumnTitle(state, action: PayloadAction<{ id: string, newTitle: string }>) {
+            const column = state.columns.find(column => column.id === action.payload.id)
+            if (column) {
+                column.title = action.payload.newTitle
+            }
+        },
+        addCardAC(state, action: PayloadAction<{ columnId: string, cardTitle: string, cardId: string }>) {
+            state.columns.map(column => column.id === action.payload.columnId
+                ? {
+                    ...column, cards: column.cards.push({
+                        id: action.payload.cardId,
+                        title: action.payload.cardTitle,
+                        comments: [],
+                        description: ''
+                    })
                 }
-            },
-            changeCardTitle(state, action: PayloadAction<{ cardId: string, columnId: string, newTitle: string }>) {
-                const columnIndex = state.columns.findIndex((column) => column.id === action.payload.columnId)
-                if (columnIndex > -1) {
-                    const cardIndex = state.columns[columnIndex].cards.findIndex((card) => card.id = action.payload.cardId)
-                    if (cardIndex > -1) {
-                        state.columns[columnIndex].cards[cardIndex].title = action.payload.newTitle
-                    }
+                : column)
+        },
+        removeCard(state, action: PayloadAction<{ cardId: string, columnId: string }>) {
+            const column = state.columns.find((column) => column.id === action.payload.columnId)
+            if (column) {
+                column.cards = column.cards.filter((c) => (c.id !== action.payload.cardId))
+            }
+        },
+        changeCardTitle(state, action: PayloadAction<{ cardId: string, columnId: string, newTitle: string }>) {
+            const column = state.columns.find((column) => column.id === action.payload.columnId)
+            if (column) {
+                const card = column.cards.find((card) => card.id = action.payload.cardId)
+                if (card) {
+                    card.title = action.payload.newTitle
                 }
-            },
-            addDescription(state, action: PayloadAction<{ cardId: string, columnId: string, description: string }>) {
-                const columnIndex = state.columns.findIndex((column) => column.id === action.payload.columnId)
-                if (columnIndex > -1) {
-                    const cardIndex = state.columns[columnIndex].cards.findIndex((card) => card.id = action.payload.cardId)
-                    if (cardIndex > -1) {
-                        state.columns[columnIndex].cards[cardIndex].description = action.payload.description
-                    }
+            }
+        },
+        addDescription(state, action: PayloadAction<{ cardId: string, columnId: string, description: string }>) {
+            const column = state.columns.find((column) => column.id === action.payload.columnId)
+            if (column) {
+                const card = column.cards.find((card) => card.id = action.payload.cardId)
+                if (card) {
+                    card.description = action.payload.description
                 }
-            },
-            addComment(state, action: PayloadAction<{ cardId: string, columnId: string, newComment: string }>) {
-                const columnIndex = state.columns.findIndex((column) => column.id === action.payload.columnId)
-                if (columnIndex > -1) {
-                    const cardIndex = state.columns[columnIndex].cards.findIndex((card) => card.id = action.payload.cardId)
-                    if (cardIndex > -1) {
-                        state.columns[columnIndex].cards[cardIndex].comments.push({
-                            text: action.payload.newComment,
-                            id: v1()
-                        })
-                    }
+            }
+        },
+        addComment(state, action: PayloadAction<{ cardId: string, columnId: string, newComment: string }>) {
+            const column = state.columns.find((column) => column.id === action.payload.columnId)
+            if (column) {
+                const card = column.cards.find((card) => card.id = action.payload.cardId)
+                if (card) {
+                    card.comments.push({
+                        text: action.payload.newComment,
+                        id: v1()
+                    })
                 }
-            },
-            changeComment(state, action: PayloadAction<{ commentId: string, cardId: string, columnId: string, comment: string }>) {
-                const columnIndex = state.columns.findIndex((column) => column.id === action.payload.columnId)
-                if (columnIndex > -1) {
-                    const cardIndex = state.columns[columnIndex].cards.findIndex((card) => card.id = action.payload.cardId)
-                    if (cardIndex > -1) {
-                        const commentIndex = state.columns[columnIndex].cards[cardIndex].comments.findIndex((comment) => comment.id = action.payload.commentId)
-                        if (commentIndex > -1) {
-                            state.columns[columnIndex].cards[cardIndex].comments[commentIndex].text = action.payload.comment
-                        }
-                    }
-                }
-            },
-            removeComment(state, action: PayloadAction<{ commentId: string, cardId: string, columnId: string }>) {
-                const columnIndex = state.columns.findIndex((column) => column.id === action.payload.columnId)
-                if (columnIndex > -1) {
-                    const cardIndex = state.columns[columnIndex].cards.findIndex((card) => card.id = action.payload.cardId)
-                    if (cardIndex > -1) {
-                        state.columns[columnIndex].cards[cardIndex].comments = state.columns[columnIndex].cards[cardIndex].comments.filter((comment) => (comment.id !== action.payload.commentId))
+            }
+        },
+        changeComment(state, action: PayloadAction<{ commentId: string, cardId: string, columnId: string, comment: string }>) {
+            const column = state.columns.find((column) => column.id === action.payload.columnId)
+            if (column) {
+                const card = column.cards.find((card) => card.id = action.payload.cardId)
+                if (card) {
+                    const comment = card.comments.find((comment) => comment.id = action.payload.commentId)
+                    if (comment) {
+                        comment.text = action.payload.comment
                     }
                 }
             }
+        },
+        removeComment(state, action: PayloadAction<{ commentId: string, cardId: string, columnId: string }>) {
+            const column = state.columns.find((column) => column.id === action.payload.columnId)
+            if (column) {
+                const card = column.cards.find((card) => card.id = action.payload.cardId)
+                if (card) {
+                    card.comments = card.comments.filter((comment) => (comment.id !== action.payload.commentId))
+                }
+            }
+        },
+        setUserName(state, action: PayloadAction<{ userName: string }>) {
+            if (action.payload.userName) {
+                state.userName = action.payload.userName
+            }
         }
     }
-)
+})
 
 export const {
     changeColumnTitle,
-    fetchColumns,
     addCardAC,
     removeCard,
     changeCardTitle,
     addDescription,
     addComment,
     changeComment,
-    removeComment
+    removeComment,
+    setUserName
 } = slice.actions
 
 export const mainReducer = slice.reducer

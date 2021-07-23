@@ -1,13 +1,13 @@
 import styled from "styled-components"
-import {Card} from "./Card"
+import {Card} from "../Card/index"
 import React, {useState} from "react"
-import {addCardAC, changeColumnTitle} from "../Redux/main-reducer"
-import {CardType} from "../Redux/state"
+import {addCardAC, changeColumnTitle} from "../../Redux/main-reducer"
+import {CardType} from "../../Redux/state"
 import {v1} from "uuid"
 import {useDispatch} from "react-redux";
 import {Field, Form} from "react-final-form";
-import {ButtonGroup} from "./CardDetails/CardDetails";
-import {required} from "./CardDetails/CardHeader";
+import {ButtonGroup} from "../CardDetails/CardDetails";
+import {required} from "../CardDetails/Components/CardHeader";
 
 type ColumnPropsType = {
     title: string
@@ -19,28 +19,28 @@ export function Column({title, id, cards}: ColumnPropsType) {
     const dispatch = useDispatch()
 
     //Change title of column
-    const [editMode, setEditMode] = useState<boolean>(false)
+    const [isEditMode, setIsEditMode] = useState<boolean>(false)
     const activateEditMode = () => {
-        setEditMode(true)
+        setIsEditMode(true)
     }
     const onChangeTitle = (values: { newTitle: string }) => {
         dispatch(changeColumnTitle({id, newTitle: values.newTitle}))
-        setEditMode(false)
+        setIsEditMode(false)
     }
 
     //Add card
-    const [addingMode, setAddingMode] = useState<boolean>(false)
+    const [isAddingMode, setIsAddingMode] = useState<boolean>(false)
     const activateAddingMode = () => {
-        setAddingMode(true)
+        setIsAddingMode(true)
     }
     const addCard = (values: { cardTitle: string }) => {
         dispatch(addCardAC({columnId: id, cardTitle: values.cardTitle, cardId: v1()}))
-        setAddingMode(false)
+        setIsAddingMode(false)
     }
 
     return (
         <Section>
-            {!editMode ? (
+            {!isEditMode ? (
                 <ColumnTitle onClick={activateEditMode}>
                     {title}
                 </ColumnTitle>
@@ -54,7 +54,7 @@ export function Column({title, id, cards}: ColumnPropsType) {
                                 <Field name="newTitle" validate={required}>
                                     {({input, meta}) => (
                                         <div>
-                                            <input {...input} type="text" placeholder="newTitle"/>
+                                            <input {...input} type="text" placeholder="newTitle" autoFocus/>
                                             {meta.error && meta.touched && <span>{meta.error}</span>}
                                         </div>
                                     )}
@@ -65,7 +65,7 @@ export function Column({title, id, cards}: ColumnPropsType) {
                                 <button type="submit">
                                     Save
                                 </button>
-                                <button onClick={() => setEditMode(false)}>
+                                <button onClick={() => setIsEditMode(false)}>
                                     Cancel
                                 </button>
                             </ButtonGroup>
@@ -87,7 +87,7 @@ export function Column({title, id, cards}: ColumnPropsType) {
                 ))}
             </CardsList>
             <AddingCardsContainer>
-                {!addingMode ? (
+                {!isAddingMode ? (
                     <span onClick={activateAddingMode}>
                         Add one more card
                     </span>
@@ -100,7 +100,13 @@ export function Column({title, id, cards}: ColumnPropsType) {
                                     <Field name="cardTitle" validate={required}>
                                         {({input, meta}) => (
                                             <div>
-                                                <Input {...input} type="text" placeholder="Enter text"/>
+                                                <Input
+                                                    {...input}
+                                                    type="text"
+                                                    placeholder="Enter text"
+                                                    autoFocus
+                                                    onBlur={() => setIsAddingMode(false)}
+                                                />
                                                 {(meta.error && meta.touched) && <div>{meta.error}</div>}
                                             </div>
                                         )}
@@ -110,7 +116,7 @@ export function Column({title, id, cards}: ColumnPropsType) {
                                     <button type="submit">
                                         Add card
                                     </button>
-                                    <button onClick={() => setAddingMode(false)}>
+                                    <button onClick={() => setIsAddingMode(false)}>
                                         Cancel
                                     </button>
                                 </ButtonGroup>

@@ -1,7 +1,7 @@
 import styled from "styled-components"
 import React, {useState} from "react"
-import {CommentType} from "../Redux/state"
-import {CardDetails} from "./CardDetails/CardDetails"
+import {CommentType} from "../../Redux/state"
+import {CardDetails} from "../CardDetails/index"
 
 export type CardPropsType = {
     columnTitle: string
@@ -14,12 +14,9 @@ export type CardPropsType = {
 
 export function Card({id, title, comments, description, columnTitle, columnId}: CardPropsType) {
     const [isOpen, setIsOpen] = useState(false)
-    console.log("isOpen: " + isOpen)
     const seeCardDetails = () => {
         setIsOpen(true)
     }
-
-    const props = {id, title, comments, description, columnTitle, columnId}
     return (
         <div onClick={seeCardDetails}>
             <Item>
@@ -30,7 +27,12 @@ export function Card({id, title, comments, description, columnTitle, columnId}: 
                 <div
                     >
                     <CardDetails
-                        {...props}
+                        id={id}
+                        title={title}
+                        comments={comments}
+                        description={description}
+                        columnTitle={columnTitle}
+                        columnId={columnId}
                         closeModal={() => setIsOpen(false)}
                         isOpen={isOpen}
                     />

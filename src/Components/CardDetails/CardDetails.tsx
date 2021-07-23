@@ -1,11 +1,10 @@
 import styled from "styled-components"
-import React, {useEffect, useRef} from "react"
-import {CardPropsType} from "../Card"
-import {CardHeader} from "./CardHeader";
-import {CardDescription} from "./CardDescription";
-import {CardComments} from "./CardComments";
+import React, {useEffect} from "react"
+import {CardPropsType} from "../Card/Card"
+import {CardComments, CardDescription, CardHeader} from "./Components/index";
 
 type PropsType = CardPropsType & { closeModal: () => void, isOpen: boolean }
+
 
 export function CardDetails(
     {
@@ -19,18 +18,15 @@ export function CardDetails(
         isOpen
     }: PropsType) {
 
-    const divRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
-        // @ts-ignore
-        divRef.current.focus()
-    }, [])
-
-    return (
-        <div ref={divRef} onKeyDown={(e) => {
+        document.addEventListener('keydown', function (e) {
             if (e.code === "Escape" && isOpen) {
                 closeModal()
             }
-        }}>
+        })
+    })
+    return (
+        <div>
             <PopupBox>
                 <Container>
                     <Window>

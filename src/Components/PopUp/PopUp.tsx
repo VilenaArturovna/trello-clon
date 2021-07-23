@@ -1,16 +1,14 @@
 import styled from "styled-components"
-import {localStorageEnum} from "../Redux/state"
 import {Field, Form} from 'react-final-form'
+import {useDispatch} from "react-redux";
+import {setUserName} from "../../Redux/main-reducer";
 
-type PropsType = {
-    handleClose: () => void
-}
-
-export function PopUp(props: PropsType) {
+export function PopUp({handleClose}: { handleClose: () => void }) {
     const setUserNameToLS = (values: { userName: string }) => {
-        localStorage.setItem(localStorageEnum.userName, values.userName)
-        props.handleClose()
+        dispatch(setUserName({userName: values.userName}))
+        handleClose()
     }
+    const dispatch = useDispatch()
 
     return (
         <PopupBox>
@@ -26,6 +24,7 @@ export function PopUp(props: PropsType) {
                                     component="input"
                                     type="text"
                                     placeholder="Enter Your Name"
+                                    autoFocus
                                 />
                             </div>
                             <SubmitButton>

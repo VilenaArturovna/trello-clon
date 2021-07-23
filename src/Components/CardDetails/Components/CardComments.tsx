@@ -1,9 +1,9 @@
 import React from "react";
-import {ButtonGroup, TextField, Title} from "./CardDetails";
+import {ButtonGroup, TextField, Title} from "../CardDetails";
 import styled from "styled-components";
-import {CommentType} from "../../Redux/state";
-import {addComment} from "../../Redux/main-reducer";
-import {CommentItem} from "./CommentItem";
+import {CommentType} from "../../../Redux/state";
+import {addComment} from "../../../Redux/main-reducer";
+import {CommentItem} from "./CommentItem/index";
 import {useDispatch} from "react-redux";
 import {Field, Form} from "react-final-form";
 import {required} from "./CardHeader";
@@ -33,7 +33,7 @@ export function CardComments({comments, cardId, columnId}: PropsType) {
                             <Field name="newComment" validate={required}>
                                 {({input, meta}) => (
                                     <div>
-                                        <TextField {...input} type="text" autoFocus/>
+                                        <TextField {...input} type="text"/>
                                         {meta.error && meta.touched && <span>{meta.error}</span>}
                                     </div>
                                 )}

@@ -1,12 +1,11 @@
-import {Column} from "./Column"
+import {Column} from "../Column/index"
 import styled from "styled-components"
 import React from "react"
-import {ColumnType, StateType} from "../Redux/state"
 import {useSelector} from "react-redux";
+import {getColumns} from "../../Redux/selectors";
 
 export function Board() {
-    const columns = useSelector<StateType, Array<ColumnType>>(state => state.columns)
-
+    const columns = useSelector(getColumns)
     return (
         <div>
             <Section>

@@ -15,6 +15,7 @@ export type ColumnType = {
 }
 export type StateType = {
     columns: Array<ColumnType>
+    userName: string
 }
 
 export enum localStorageEnum {

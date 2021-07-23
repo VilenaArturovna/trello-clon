@@ -1,7 +1,7 @@
 import React, {useState} from "react";
-import {Button, ButtonGroup, TextField, Title} from "./CardDetails";
+import {Button, ButtonGroup, TextField, Title} from "../CardDetails";
 import styled from "styled-components";
-import {addDescription} from "../../Redux/main-reducer";
+import {addDescription} from "../../../Redux/main-reducer";
 import {useDispatch} from "react-redux";
 import {Field, Form} from "react-final-form";
 
@@ -13,19 +13,17 @@ type PropsType = {
 
 export function CardDescription({desc, cardId, columnId}: PropsType) {
     const dispatch = useDispatch()
-
-    const [editDescMode, setEditDescMode] = useState<boolean>(false)
+    const [isEditDescMode, setIsEditDescMode] = useState<boolean>(false)
     const onAddDescHandler = () => {
-        setEditDescMode(true)
+        setIsEditDescMode(true)
     }
-
     const onDescAdding = (values: { description: string }) => {
         dispatch(addDescription({cardId, columnId, description: values.description}))
-        setEditDescMode(false)
+        setIsEditDescMode(false)
     }
     const onDescClear = () => {
         dispatch(addDescription({cardId, columnId, description: ''}))
-        setEditDescMode(true)
+        setIsEditDescMode(true)
     }
 
     return (
@@ -33,13 +31,13 @@ export function CardDescription({desc, cardId, columnId}: PropsType) {
             <Title>
                 Description
             </Title>
-            {!desc && !editDescMode ? (
+            {!desc && !isEditDescMode ? (
                 <Button onClick={onAddDescHandler}>
                     Add description
                 </Button>
             ) : (
                 <>
-                    {!editDescMode && (
+                    {!isEditDescMode && (
                         <>
                             <DescriptionText onClick={onAddDescHandler}>
                                 {desc}
@@ -51,7 +49,7 @@ export function CardDescription({desc, cardId, columnId}: PropsType) {
                     )}
                 </>
             )}
-            {editDescMode
+            {isEditDescMode
             && (
                 <div>
                     <Form

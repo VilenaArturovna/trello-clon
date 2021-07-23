@@ -1,11 +1,11 @@
-import {Button, ButtonGroup, TextField} from "./CardDetails";
+import {Button, ButtonGroup, TextField} from "../../CardDetails";
 import React, {useState} from "react";
-import {changeComment, removeComment} from "../../Redux/main-reducer";
+import {changeComment, removeComment} from "../../../../Redux/main-reducer";
 import styled from "styled-components";
-import {useDispatch} from "react-redux";
-import {userName} from "../../api/api";
+import {useDispatch, useSelector} from "react-redux";
 import {Field, Form} from "react-final-form";
-import {required} from "./CardHeader";
+import {required} from "../CardHeader";
+import {getUserName} from "../../../../Redux/selectors";
 
 type PropsType = {
     commentId: string
@@ -28,6 +28,7 @@ export function CommentItem({commentId, columnId, cardId, text}: PropsType) {
     const deleteComment = () => {
         dispatch(removeComment({commentId, cardId, columnId}))
     }
+    const userName = useSelector(getUserName)
 
     return (
         <Comment>

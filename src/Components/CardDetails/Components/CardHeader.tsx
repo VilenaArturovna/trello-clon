@@ -1,10 +1,10 @@
 import React, {useState} from "react";
-import {changeCardTitle, removeCard} from "../../Redux/main-reducer";
-import {Button, ButtonGroup, Title} from "./CardDetails"
+import {changeCardTitle, removeCard} from "../../../Redux/main-reducer";
+import {Button, ButtonGroup, Title} from "../CardDetails"
 import styled from "styled-components";
-import {useDispatch} from "react-redux";
-import {userName} from "../../api/api";
+import {useDispatch, useSelector} from "react-redux";
 import {Field, Form} from "react-final-form";
+import {getUserName} from "../../../Redux/selectors";
 
 type PropsType = {
     title: string
@@ -17,24 +17,25 @@ export const required = (value: any) => (value ? undefined : 'Required')
 
 export function CardHeader({title, columnTitle, columnId, cardId, closeModal}: PropsType) {
     const dispatch = useDispatch()
-    const [editTitleMode, setEditTitleMode] = useState<boolean>(false)
+    const [isEditTitleMode, setIsEditTitleMode] = useState<boolean>(false)
     const activateEditTitleMode = () => {
-        setEditTitleMode(true)
+        setIsEditTitleMode(true)
     }
     const onChangeTitle = (values: { newTitle: string }) => {
-        setEditTitleMode(false)
+        setIsEditTitleMode(false)
         dispatch(changeCardTitle({cardId, columnId, newTitle: values.newTitle}))
     }
     const deleteCard = () => {
         dispatch(removeCard({cardId: cardId, columnId}))
         closeModal()
     }
+    const userName = useSelector(getUserName)
 
 
     return (
         <Header>
             <div>
-                {!editTitleMode ? (
+                {!isEditTitleMode ? (
                     <Title onClick={activateEditTitleMode}>
                         {title}
                     </Title>
@@ -60,7 +61,7 @@ export function CardHeader({title, columnTitle, columnId, cardId, closeModal}: P
                                         <button type="submit">
                                             Save
                                         </button>
-                                        <button onClick={() => setEditTitleMode(false)}>
+                                        <button onClick={() => setIsEditTitleMode(false)}>
                                             Cancel
                                         </button>
                                     </ButtonGroup>
